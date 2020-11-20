@@ -14,8 +14,166 @@
         <module>wu-registry</module>
     </modules>
 
-    <dependencyManagement>
+    <properties>
+        <seng.version>1.0-SNAPSHOT</seng.version>
+        <junit-jupiter.version>RELEASE</junit-jupiter.version>
+        <netty.version>4.1.52.Final</netty.version>
+        <zookeeper.version>3.6.2</zookeeper.version>
+        <consul.version>1.4.2</consul.version>
+        <java.version>1.8</java.version>
+        <maven.compiler.source>1.8</maven.compiler.source>
+        <maven.compiler.target>1.8</maven.compiler.target>
+        <guava.version>29.0-jre</guava.version>
+        <common-lang3.version>3.11</common-lang3.version>
+        <jackson.version>2.11.2</jackson.version>
+        <sl4j.version>1.7.25</sl4j.version>
+        <logback.version>1.2.3</logback.version>
+        <lombok.version>1.18.12</lombok.version>
+    </properties>
 
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>com.github</groupId>
+                <artifactId>seng-core</artifactId>
+                <version>${seng.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.github</groupId>
+                <artifactId>seng-common</artifactId>
+                <version>${seng.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.github</groupId>
+                <artifactId>seng-executor</artifactId>
+                <version>${seng.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.github</groupId>
+                <artifactId>seng-scheduler</artifactId>
+                <version>${seng.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.github</groupId>
+                <artifactId>seng-registry-api</artifactId>
+                <version>${seng.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.github</groupId>
+                <artifactId>seng-registry-zookeeper</artifactId>
+                <version>${seng.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.github</groupId>
+                <artifactId>seng-registry-consul</artifactId>
+                <version>${seng.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.github</groupId>
+                <artifactId>seng-client</artifactId>
+                <version>${seng.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.junit.jupiter</groupId>
+                <artifactId>junit-jupiter</artifactId>
+                <version>${junit-jupiter.version}</version>
+                <scope>test</scope>
+            </dependency>
+
+            <dependency>
+                <groupId>io.netty</groupId>
+                <artifactId>netty-all</artifactId> <!-- Use 'netty-all' for 4.0 or above -->
+                <version>${netty.version}</version>
+            </dependency>
+
+            <!-- https://mvnrepository.com/artifact/org.apache.zookeeper/zookeeper -->
+            <dependency>
+                <groupId>org.apache.zookeeper</groupId>
+                <artifactId>zookeeper</artifactId>
+                <version>${zookeeper.version}</version>
+            </dependency>
+
+            <!-- https://mvnrepository.com/artifact/org.apache.curator/curator-recipes -->
+            <dependency>
+                <groupId>org.apache.curator</groupId>
+                <artifactId>curator-recipes</artifactId>
+                <version>5.1.0</version>
+            </dependency>
+
+
+            <!-- https://mvnrepository.com/artifact/com.orbitz.consul/consul-client -->
+            <dependency>
+                <groupId>com.orbitz.consul</groupId>
+                <artifactId>consul-client</artifactId>
+                <version>1.4.2</version>
+            </dependency>
+
+
+            <dependency>
+                <groupId>com.google.guava</groupId>
+                <artifactId>guava</artifactId>
+                <version>${guava.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.apache.commons</groupId>
+                <artifactId>commons-lang3</artifactId>
+                <version>${common-lang3.version}</version>
+            </dependency>
+
+            <!-- https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-databind -->
+            <dependency>
+                <groupId>com.fasterxml.jackson.core</groupId>
+                <artifactId>jackson-databind</artifactId>
+                <version>${jackson.version}</version>
+            </dependency>
+
+            <!-- https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-core -->
+            <dependency>
+                <groupId>com.fasterxml.jackson.core</groupId>
+                <artifactId>jackson-core</artifactId>
+                <version>${jackson.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.slf4j</groupId>
+                <artifactId>slf4j-api</artifactId>
+                <version>${sl4j.version}</version>
+            </dependency>
+            <!-- https://mvnrepository.com/artifact/ch.qos.logback/logback-classic -->
+            <dependency>
+                <groupId>ch.qos.logback</groupId>
+                <artifactId>logback-classic</artifactId>
+                <version>${logback.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.projectlombok</groupId>
+                <artifactId>lombok</artifactId>
+                <version>${lombok.version}</version>
+            </dependency>
+
+        </dependencies>
     </dependencyManagement>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>8</source>
+                    <target>8</target>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
 
 </project>
