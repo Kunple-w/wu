@@ -12,9 +12,10 @@
         <module>wu-core</module>
         <module>wu-common</module>
         <module>wu-registry</module>
-        <module>wu-registry-consul</module>
-
     </modules>
 
+    <dependencyManagement>
+
+    </dependencyManagement>
 
 </project>
