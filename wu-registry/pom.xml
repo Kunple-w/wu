@@ -18,4 +18,5 @@
         <module>wu-registry-zookeeper</module>
         <module>wu-registry-consul</module>
     </modules>
+
 </project>

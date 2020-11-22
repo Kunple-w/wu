@@ -15,7 +15,7 @@
     </modules>
 
     <properties>
-        <seng.version>1.0-SNAPSHOT</seng.version>
+        <wu.version>1.0-SNAPSHOT</wu.version>
         <junit-jupiter.version>RELEASE</junit-jupiter.version>
         <netty.version>4.1.52.Final</netty.version>
         <zookeeper.version>3.6.2</zookeeper.version>
@@ -35,49 +35,31 @@
         <dependencies>
             <dependency>
                 <groupId>com.github</groupId>
-                <artifactId>seng-core</artifactId>
-                <version>${seng.version}</version>
+                <artifactId>wu-core</artifactId>
+                <version>${wu.version}</version>
             </dependency>
 
             <dependency>
                 <groupId>com.github</groupId>
-                <artifactId>seng-common</artifactId>
-                <version>${seng.version}</version>
+                <artifactId>wu-common</artifactId>
+                <version>${wu.version}</version>
             </dependency>
 
             <dependency>
                 <groupId>com.github</groupId>
-                <artifactId>seng-executor</artifactId>
-                <version>${seng.version}</version>
+                <artifactId>wu-registry-api</artifactId>
+                <version>${wu.version}</version>
             </dependency>
 
             <dependency>
                 <groupId>com.github</groupId>
-                <artifactId>seng-scheduler</artifactId>
-                <version>${seng.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>com.github</groupId>
-                <artifactId>seng-registry-api</artifactId>
-                <version>${seng.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>com.github</groupId>
-                <artifactId>seng-registry-zookeeper</artifactId>
-                <version>${seng.version}</version>
+                <artifactId>wu-registry-zookeeper</artifactId>
+                <version>${wu.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.github</groupId>
-                <artifactId>seng-registry-consul</artifactId>
-                <version>${seng.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>com.github</groupId>
-                <artifactId>seng-client</artifactId>
-                <version>${seng.version}</version>
+                <artifactId>wu-registry-consul</artifactId>
+                <version>${wu.version}</version>
             </dependency>
 
             <dependency>
