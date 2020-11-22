@@ -11,5 +11,12 @@
 
     <artifactId>wu-registry-consul</artifactId>
 
+    <dependencies>
+        <dependency>
+            <groupId>com.github</groupId>
+            <artifactId>wu-registry-api</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
+    </dependencies>
 
 </project>
