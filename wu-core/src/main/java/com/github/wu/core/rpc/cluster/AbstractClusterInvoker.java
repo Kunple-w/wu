@@ -4,7 +4,7 @@ import com.github.wu.common.URL;
 import com.github.wu.common.URLConstant;
 import com.github.wu.common.spi.ExtensionLoader;
 import com.github.wu.core.rpc.Invoker;
-import com.github.wu.core.rpc.LoadBalance;
+import com.github.wu.core.rpc.loadbalance.LoadBalance;
 import com.github.wu.core.rpc.RemoteInvoker;
 import com.github.wu.core.transport.ApiResult;
 import com.github.wu.core.transport.Invocation;
@@ -80,14 +80,14 @@ public abstract class AbstractClusterInvoker<T> implements ClusterInvoker<T> {
         return extensionLoader.getExtension(invokers.get(0).getURL().getParam(URLConstant.LOAD_BALANCE_KEY, URLConstant.LOAD_BALANCE_RANDOM));
     }
 
-    protected Invoker<T> select(LoadBalance<T> loadBalance, List<Invoker<T>> invokers, Invocation invocation) {
+    protected <I> Invoker<T> select(LoadBalance loadBalance, List<Invoker<T>> invokers, Invocation invocation) {
         if (invokers.isEmpty()) {
             return null;
         }
-        return loadBalance.selectInvoker(invokers, getURL(), invocation);
+        return loadBalance.select(invokers, getURL(), invocation);
     }
 
-    public abstract ApiResult call(Invocation invocation, List<Invoker<T>> invokers, LoadBalance<T> loadBalance);
+    public abstract ApiResult call(Invocation invocation, List<Invoker<T>> invokers, LoadBalance loadBalance);
 
     @Override
     public URL getURL() {
