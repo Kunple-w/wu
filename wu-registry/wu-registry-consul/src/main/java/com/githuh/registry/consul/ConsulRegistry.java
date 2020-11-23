@@ -33,7 +33,7 @@ public class ConsulRegistry implements RegisterService {
     private Map<URL, ServiceHealthCache> cacheMap = new ConcurrentHashMap<>();
     private Map<ServiceHealthCache, List<Map<com.github.wu.registry.api.EventListener, ConsulCache.Listener<ServiceHealthKey, ServiceHealth>>>> listenerMap = new ConcurrentHashMap<>();
 
-    ConsulRegistry(String url) {
+    public ConsulRegistry(String url) {
         if (StringUtils.isNotBlank(url)) {
             this.consul = Consul.builder().withUrl(url).build();
         } else {
@@ -41,7 +41,7 @@ public class ConsulRegistry implements RegisterService {
         }
     }
 
-    ConsulRegistry() {
+    public ConsulRegistry() {
         this.consul = Consul.builder().build();
     }
 
