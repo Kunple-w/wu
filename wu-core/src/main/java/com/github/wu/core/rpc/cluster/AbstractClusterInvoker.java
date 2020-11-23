@@ -80,7 +80,7 @@ public abstract class AbstractClusterInvoker<T> implements ClusterInvoker<T> {
         return extensionLoader.getExtension(invokers.get(0).getURL().getParam(URLConstant.LOAD_BALANCE_KEY, URLConstant.LOAD_BALANCE_RANDOM));
     }
 
-    protected <I> Invoker<T> select(LoadBalance loadBalance, List<Invoker<T>> invokers, Invocation invocation) {
+    protected <B> Invoker<B> select(LoadBalance loadBalance, List<Invoker<B>> invokers, Invocation invocation) {
         if (invokers.isEmpty()) {
             return null;
         }
