@@ -54,6 +54,7 @@ public class ZookeeperRegistry implements RegisterService {
 
     @Override
     public void destroy() {
+        client.close();
     }
 
     private void startClientIfNeed() {
@@ -113,7 +114,7 @@ public class ZookeeperRegistry implements RegisterService {
         }
     }
 
-    private CuratorCache createListener(URL url, UrlListener URLListener) {
+    private CuratorCache createListener(URL url, UrlListener urlListener) {
         String toParentPath = toParentPath(url);
         CuratorCache curatorCache = CuratorCache.build(client, toParentPath);
         CuratorCacheListener cacheListener = CuratorCacheListener.builder().forPathChildrenCache(toParentPath, client, new PathChildrenCacheListener() {
@@ -148,7 +149,7 @@ public class ZookeeperRegistry implements RegisterService {
                     urls.add(childUrl);
                 }
                 UrlListener.URLChanged urlChanged = new UrlListener.URLChanged(urls);
-                URLListener.onEvent(urlChanged);
+                urlListener.onEvent(urlChanged);
             }
         }).build();
         curatorCache.listenable().addListener(cacheListener);

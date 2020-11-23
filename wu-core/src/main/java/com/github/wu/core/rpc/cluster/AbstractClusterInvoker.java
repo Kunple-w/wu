@@ -5,7 +5,6 @@ import com.github.wu.common.URLConstant;
 import com.github.wu.common.spi.ExtensionLoader;
 import com.github.wu.core.rpc.Invoker;
 import com.github.wu.core.rpc.loadbalance.LoadBalance;
-import com.github.wu.core.rpc.RemoteInvoker;
 import com.github.wu.core.transport.ApiResult;
 import com.github.wu.core.transport.Invocation;
 import com.github.wu.registry.api.RegisterService;
@@ -13,7 +12,6 @@ import com.github.wu.registry.api.RegistryFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -32,6 +30,7 @@ public abstract class AbstractClusterInvoker<T> implements ClusterInvoker<T> {
     protected Class<T> interfaceClass;
 
     private RegisterService registerService;
+    private Registry<T> registry;
 
 
     @Override
@@ -59,20 +58,9 @@ public abstract class AbstractClusterInvoker<T> implements ClusterInvoker<T> {
 
     @Override
     public ApiResult call(Invocation invocation) {
-        URL lookupURL = new URL(invocation.getServiceName());
-        List<URL> urlList = registerService.lookup(lookupURL);
-        List<Invoker<T>> invokers = providerList(urlList);
+        List<Invoker<T>> invokers = registry.lookup(invocation);
         LoadBalance loadBalance = initLoadBalance(invocation, invokers);
         return call(invocation, invokers, loadBalance);
-    }
-
-    protected List<Invoker<T>> providerList(List<URL> urlList) {
-        List<Invoker<T>> invokers = new ArrayList<>();
-        for (URL url : urlList) {
-            RemoteInvoker<T> remoteInvoker = new RemoteInvoker<>(url, interfaceClass);
-            invokers.add(remoteInvoker);
-        }
-        return invokers;
     }
 
     protected LoadBalance initLoadBalance(Invocation invocation, List<Invoker<T>> invokers) {
@@ -101,12 +89,25 @@ public abstract class AbstractClusterInvoker<T> implements ClusterInvoker<T> {
 
     @Override
     public void init() {
+        if (logger.isDebugEnabled()) {
+            logger.debug("begin init cluster invoker.");
+        }
         registerService = loadRegistry();
         registerService.init();
+        initRegistry();
+        if (logger.isDebugEnabled()) {
+            logger.debug("init cluster invoker success.");
+        }
+    }
+
+    private void initRegistry() {
+        registry = new DefaultRegistry<>(registryUrl, interfaceClass);
+        registry.init();
     }
 
     @Override
     public void destroy() {
         registerService.destroy();
+        registry.destroy();
     }
 }
