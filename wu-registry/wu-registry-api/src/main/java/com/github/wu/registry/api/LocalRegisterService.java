@@ -3,8 +3,6 @@ package com.github.wu.registry.api;
 import com.github.wu.common.URL;
 import com.github.wu.common.URLConstant;
 import com.github.wu.common.exception.WuRuntimeException;
-import lombok.AllArgsConstructor;
-import lombok.Data;
 
 import java.util.*;
 import java.util.concurrent.ExecutorService;
@@ -21,7 +19,7 @@ public class LocalRegisterService implements com.github.wu.registry.api.Register
     // TODO: 这里的key是serviceName还是具体的url，下面不统一。
     protected Map<String, Set<URL>> cache = new HashMap<>();
 
-    protected Map<URL, Set<com.github.wu.registry.api.EventListener>> listenerMap = new HashMap<>();
+    protected Map<URL, Set<UrlListener>> listenerMap = new HashMap<>();
 
     @Override
     public void register(URL url) {
@@ -32,12 +30,12 @@ public class LocalRegisterService implements com.github.wu.registry.api.Register
                 Set<URL> newSet = new HashSet<>();
                 Set<URL> old = new HashSet<>(newSet);
                 newSet.add(url);
-                serviceChanged(new URLChanged(new HashSet<>(newSet)), url);
+                serviceChanged(new UrlListener.URLChanged(new HashSet<>(newSet)), url);
                 return newSet;
             } else {
                 Set<URL> old = new HashSet<>(v);
                 v.add(url);
-                serviceChanged(new URLChanged(new HashSet<>(v)), url);
+                serviceChanged(new UrlListener.URLChanged(new HashSet<>(v)), url);
                 return v;
             }
         });
@@ -60,7 +58,7 @@ public class LocalRegisterService implements com.github.wu.registry.api.Register
         cache.computeIfPresent(serviceKey, (k, v) -> {
             Set<URL> old = new HashSet<>(v);
             v.remove(url);
-            serviceChanged(new URLChanged(new HashSet<>(v)), url);
+            serviceChanged(new UrlListener.URLChanged(new HashSet<>(v)), url);
             return v;
         });
     }
@@ -71,10 +69,10 @@ public class LocalRegisterService implements com.github.wu.registry.api.Register
     }
 
     private class NotifyWorker implements Runnable {
-        private final URLChanged changed;
+        private final UrlListener.URLChanged changed;
         private URL url;
 
-        public NotifyWorker(URLChanged changed, URL url) {
+        public NotifyWorker(UrlListener.URLChanged changed, URL url) {
             this.changed = changed;
             this.url = url;
         }
@@ -82,30 +80,21 @@ public class LocalRegisterService implements com.github.wu.registry.api.Register
         @Override
         public void run() {
             // TODO: 这里绑定的监听器是针对某个URL的，为什么要把所有seviceKey对应的URL都传过去，是不是这里监听器的key也需要改变一下
-            Set<com.github.wu.registry.api.EventListener> listeners = listenerMap.get(url);
+            Set<UrlListener> listeners = listenerMap.get(url);
             if (listeners != null && !listeners.isEmpty()) {
-                for (com.github.wu.registry.api.EventListener listener : listeners) {
+                for (UrlListener listener : listeners) {
                     listener.onEvent(changed);
                 }
             }
         }
     }
 
-    protected void serviceChanged(URLChanged urlChanged, URL url) {
+    protected void serviceChanged(UrlListener.URLChanged urlChanged, URL url) {
         executorService.execute(new NotifyWorker(urlChanged, url));
     }
 
-    @Data
-    @AllArgsConstructor
-    public static class URLChanged {
-        //        private String serviceKey;
-//        private Set<URL> old;
-        private Set<URL> now;
-
-    }
-
     @Override
-    public void subscribe(URL url, com.github.wu.registry.api.EventListener eventListener) {
+    public void subscribe(URL url, UrlListener urlListener) {
         if (url == null) {
             throw new IllegalArgumentException("serviceName is null");
         }
@@ -116,23 +105,23 @@ public class LocalRegisterService implements com.github.wu.registry.api.Register
 
         listenerMap.compute(url, (k, v) -> {
             if (v == null) {
-                Set<com.github.wu.registry.api.EventListener> newSet = new HashSet<>();
-                newSet.add(eventListener);
+                Set<UrlListener> newSet = new HashSet<>();
+                newSet.add(urlListener);
                 return newSet;
             } else {
-                v.add(eventListener);
+                v.add(urlListener);
                 return v;
             }
         });
     }
 
     @Override
-    public void unsubscribe(URL url, com.github.wu.registry.api.EventListener eventListener) {
+    public void unsubscribe(URL url, UrlListener urlListener) {
         if (url == null) {
             throw new IllegalArgumentException("serviceName is null");
         }
         listenerMap.computeIfPresent(url, (k, v) -> {
-            v.remove(eventListener);
+            v.remove(urlListener);
             return v;
         });
     }

@@ -4,8 +4,7 @@ import com.github.wu.common.URL;
 import com.github.wu.common.URLConstant;
 import com.github.wu.common.exception.WuRuntimeException;
 import com.github.wu.common.spi.SPIAlias;
-import com.github.wu.registry.api.EventListener;
-import com.github.wu.registry.api.LocalRegisterService;
+import com.github.wu.registry.api.UrlListener;
 import com.github.wu.registry.api.RegisterService;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.curator.framework.CuratorFramework;
@@ -114,7 +113,7 @@ public class ZookeeperRegistry implements RegisterService {
         }
     }
 
-    private CuratorCache createListener(URL url, EventListener eventListener) {
+    private CuratorCache createListener(URL url, UrlListener URLListener) {
         String toParentPath = toParentPath(url);
         CuratorCache curatorCache = CuratorCache.build(client, toParentPath);
         CuratorCacheListener cacheListener = CuratorCacheListener.builder().forPathChildrenCache(toParentPath, client, new PathChildrenCacheListener() {
@@ -148,8 +147,8 @@ public class ZookeeperRegistry implements RegisterService {
                     URL childUrl = URL.of(URLDecoder.decode(new String(bytes), "UTF-8"));
                     urls.add(childUrl);
                 }
-                LocalRegisterService.URLChanged urlChanged = new LocalRegisterService.URLChanged(urls);
-                eventListener.onEvent(urlChanged);
+                UrlListener.URLChanged urlChanged = new UrlListener.URLChanged(urls);
+                URLListener.onEvent(urlChanged);
             }
         }).build();
         curatorCache.listenable().addListener(cacheListener);
@@ -157,14 +156,14 @@ public class ZookeeperRegistry implements RegisterService {
     }
 
     @Override
-    public void subscribe(URL url, EventListener eventListener) {
-        CuratorCache curatorCache = createListener(url, eventListener);
+    public void subscribe(URL url, UrlListener urlListener) {
+        CuratorCache curatorCache = createListener(url, urlListener);
         curatorCache.start();
         listenerMap.put(url, curatorCache);
     }
 
     @Override
-    public void unsubscribe(URL url, EventListener eventListener) {
+    public void unsubscribe(URL url, UrlListener urlListener) {
         CuratorCache curatorCache = listenerMap.get(url);
         if (curatorCache != null) {
             curatorCache.close();

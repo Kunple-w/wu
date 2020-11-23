@@ -42,18 +42,18 @@ public interface RegisterService extends Node {
      * subscribe service
      *
      * @param url           : url
-     * @param eventListener : eventListener
+     * @param urlListener : eventListener
      * @author wangyongxu
      */
-    void subscribe(URL url, EventListener eventListener);
+    void subscribe(URL url, UrlListener urlListener);
 
     /**
      * unsubscribe service
      *
      * @param url           : serviceName
-     * @param eventListener : eventListener
+     * @param urlListener : eventListener
      * @author wangyongxu
      */
-    void unsubscribe(URL url, EventListener eventListener);
+    void unsubscribe(URL url, UrlListener urlListener);
 
 }

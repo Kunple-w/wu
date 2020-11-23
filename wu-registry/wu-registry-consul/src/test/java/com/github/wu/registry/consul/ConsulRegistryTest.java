@@ -2,8 +2,7 @@ package com.github.wu.registry.consul;
 
 
 import com.github.wu.common.URL;
-import com.github.wu.registry.api.EventListener;
-import com.github.wu.registry.api.LocalRegisterService;
+import com.github.wu.registry.api.UrlListener;
 import com.githuh.registry.consul.ConsulRegistry;
 
 import java.io.IOException;
@@ -33,13 +32,13 @@ class ConsulRegistryTest {
     @org.junit.jupiter.api.Test
     void subscribe() throws Exception {
         ConsulRegistry consulRegistry = new ConsulRegistry();
-        EventListener eventListener = new EventListener() {
+        UrlListener URLListener = new UrlListener() {
             @Override
-            public void onEvent(LocalRegisterService.URLChanged context) {
+            public void onEvent(URLChanged context) {
                 System.out.println("数据变动: " + context.getNow());
             }
         };
-        consulRegistry.subscribe(getUrl(), eventListener);
+        consulRegistry.subscribe(getUrl(), URLListener);
         System.in.read();
     }
 
@@ -47,14 +46,14 @@ class ConsulRegistryTest {
     @org.junit.jupiter.api.Test
     void unsubscribe() throws IOException {
         ConsulRegistry consulRegistry = new ConsulRegistry();
-        EventListener eventListener = new EventListener() {
+        UrlListener URLListener = new UrlListener() {
             @Override
-            public void onEvent(LocalRegisterService.URLChanged context) {
+            public void onEvent(URLChanged context) {
                 System.out.println("数据变动: " + context.getNow());
             }
         };
-        consulRegistry.subscribe(getUrl(), eventListener);
-        consulRegistry.unsubscribe(getUrl(), eventListener);
+        consulRegistry.subscribe(getUrl(), URLListener);
+        consulRegistry.unsubscribe(getUrl(), URLListener);
         System.in.read();
     }
 

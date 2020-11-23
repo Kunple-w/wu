@@ -2,7 +2,7 @@ package com.githuh.registry.consul;
 
 import com.github.wu.common.URL;
 import com.github.wu.common.URLConstant;
-import com.github.wu.registry.api.LocalRegisterService;
+import com.github.wu.registry.api.UrlListener;
 import com.github.wu.registry.api.RegisterService;
 import com.orbitz.consul.AgentClient;
 import com.orbitz.consul.Consul;
@@ -31,7 +31,7 @@ public class ConsulRegistry implements RegisterService {
     private Consul consul;
 
     private Map<URL, ServiceHealthCache> cacheMap = new ConcurrentHashMap<>();
-    private Map<ServiceHealthCache, List<Map<com.github.wu.registry.api.EventListener, ConsulCache.Listener<ServiceHealthKey, ServiceHealth>>>> listenerMap = new ConcurrentHashMap<>();
+    private Map<ServiceHealthCache, List<Map<UrlListener, ConsulCache.Listener<ServiceHealthKey, ServiceHealth>>>> listenerMap = new ConcurrentHashMap<>();
 
     public ConsulRegistry(String url) {
         if (StringUtils.isNotBlank(url)) {
@@ -128,7 +128,7 @@ public class ConsulRegistry implements RegisterService {
     }
 
     @Override
-    public void subscribe(URL url, com.github.wu.registry.api.EventListener eventListener) {
+    public void subscribe(URL url, UrlListener urlListener) {
         HealthClient healthClient = consul.healthClient();
         String serviceName = getServiceName(url);
         ServiceHealthCache serviceHealthCache = cacheMap.get(url);
@@ -142,15 +142,15 @@ public class ConsulRegistry implements RegisterService {
             if (serviceHealths.size() > 0) {
 
                 List<URL> urls = convert(serviceHealths);
-                LocalRegisterService.URLChanged urlChanged = new LocalRegisterService.URLChanged(new HashSet<>(urls));
-                eventListener.onEvent(urlChanged);
+                UrlListener.URLChanged urlChanged = new UrlListener.URLChanged(new HashSet<>(urls));
+                urlListener.onEvent(urlChanged);
             }
         };
-        List<Map<com.github.wu.registry.api.EventListener, ConsulCache.Listener<ServiceHealthKey, ServiceHealth>>> maps = listenerMap.get(finalServiceHealthCache);
-        Map<com.github.wu.registry.api.EventListener, ConsulCache.Listener<ServiceHealthKey, ServiceHealth>> map = new HashMap<>();
-        map.put(eventListener, listener);
+        List<Map<UrlListener, ConsulCache.Listener<ServiceHealthKey, ServiceHealth>>> maps = listenerMap.get(finalServiceHealthCache);
+        Map<UrlListener, ConsulCache.Listener<ServiceHealthKey, ServiceHealth>> map = new HashMap<>();
+        map.put(urlListener, listener);
         if (maps == null) {
-            List<Map<com.github.wu.registry.api.EventListener, ConsulCache.Listener<ServiceHealthKey, ServiceHealth>>> listenerList = new ArrayList<>();
+            List<Map<UrlListener, ConsulCache.Listener<ServiceHealthKey, ServiceHealth>>> listenerList = new ArrayList<>();
             listenerList.add(map);
             listenerMap.put(finalServiceHealthCache, listenerList);
         } else {
@@ -161,12 +161,12 @@ public class ConsulRegistry implements RegisterService {
     }
 
     @Override
-    public void unsubscribe(URL url, com.github.wu.registry.api.EventListener eventListener) {
+    public void unsubscribe(URL url, UrlListener urlListener) {
         ServiceHealthCache serviceHealthCache = cacheMap.get(url);
         if (serviceHealthCache != null) {
-            List<Map<com.github.wu.registry.api.EventListener, ConsulCache.Listener<ServiceHealthKey, ServiceHealth>>> maps = listenerMap.get(serviceHealthCache);
-            List<Map<com.github.wu.registry.api.EventListener, ConsulCache.Listener<ServiceHealthKey, ServiceHealth>>> list = maps.stream().filter(m -> m.get(eventListener) != null).collect(Collectors.toList());
-            serviceHealthCache.removeListener(list.get(0).get(eventListener));
+            List<Map<UrlListener, ConsulCache.Listener<ServiceHealthKey, ServiceHealth>>> maps = listenerMap.get(serviceHealthCache);
+            List<Map<UrlListener, ConsulCache.Listener<ServiceHealthKey, ServiceHealth>>> list = maps.stream().filter(m -> m.get(urlListener) != null).collect(Collectors.toList());
+            serviceHealthCache.removeListener(list.get(0).get(urlListener));
         }
 
     }

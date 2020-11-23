@@ -1,8 +1,7 @@
 package com.github.wu.registry.zookeeper;
 
 import com.github.wu.common.URL;
-import com.github.wu.registry.api.EventListener;
-import com.github.wu.registry.api.LocalRegisterService;
+import com.github.wu.registry.api.UrlListener;
 import org.apache.curator.RetryPolicy;
 import org.apache.curator.framework.CuratorFramework;
 import org.apache.curator.framework.CuratorFrameworkFactory;
@@ -67,9 +66,9 @@ class ZookeeperRegistryTest {
         ZookeeperRegistry registry = new ZookeeperRegistry(client);
         URL url = getUrl();
         registry.register(url);
-        registry.subscribe(url, new EventListener() {
+        registry.subscribe(url, new UrlListener() {
             @Override
-            public void onEvent(LocalRegisterService.URLChanged context) {
+            public void onEvent(URLChanged context) {
                 System.out.println("数据变动: " + context.getNow());
             }
         });
@@ -81,14 +80,14 @@ class ZookeeperRegistryTest {
         ZookeeperRegistry registry = new ZookeeperRegistry(client);
         URL url = getUrl();
         registry.register(url);
-        EventListener eventListener = new EventListener() {
+        UrlListener URLListener = new UrlListener() {
             @Override
-            public void onEvent(LocalRegisterService.URLChanged context) {
+            public void onEvent(URLChanged context) {
                 System.out.println("数据变动: " + context.getNow());
             }
         };
-        registry.subscribe(url, eventListener);
-        registry.unsubscribe(url, eventListener);
+        registry.subscribe(url, URLListener);
+        registry.unsubscribe(url, URLListener);
         System.in.read();
     }
 
