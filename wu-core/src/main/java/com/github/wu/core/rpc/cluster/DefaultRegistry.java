@@ -33,7 +33,7 @@ public class DefaultRegistry<T> implements Registry<T>, UrlListener {
     public DefaultRegistry(URL registryUrl, Class<T> interfaceClass) {
         this.registryUrl = registryUrl;
         this.interfaceClass = interfaceClass;
-        this.lookUrl = URL.of(interfaceClass.getName());
+        this.lookUrl = new URL(interfaceClass.getName());
     }
 
     @Override
