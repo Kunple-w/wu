@@ -12,6 +12,7 @@
         <module>wu-core</module>
         <module>wu-common</module>
         <module>wu-registry</module>
+        <module>wu-spring</module>
     </modules>
 
     <properties>
@@ -29,6 +30,7 @@
         <sl4j.version>1.7.25</sl4j.version>
         <logback.version>1.2.3</logback.version>
         <lombok.version>1.18.12</lombok.version>
+        <springboot.version>2.4.0</springboot.version>
     </properties>
 
     <dependencyManagement>
@@ -141,6 +143,23 @@
                 <version>${lombok.version}</version>
             </dependency>
 
+            <!-- https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter -->
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-starter</artifactId>
+                <version>${springboot.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-starter-test</artifactId>
+                <version>${springboot.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-starter-web</artifactId>
+                <version>${springboot.version}</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 
