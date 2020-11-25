@@ -1,6 +1,17 @@
 server:
   port: 8080
+  compression:
+    enabled:
 
 logging:
   level:
     root: debug
+
+wu:
+  registry:
+    protocol: zookeeper
+    host: localhost
+    port: 2181
+  service:
+    host: localhost
+    port: 11996
