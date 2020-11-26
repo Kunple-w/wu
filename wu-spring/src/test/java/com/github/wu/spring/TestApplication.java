@@ -2,10 +2,13 @@ package com.github.wu.spring;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.FilterType;
 
 /**
  * @author wangyongxu
  */
+@ComponentScan(includeFilters = @ComponentScan.Filter(type = FilterType.ANNOTATION, classes = WuService.class))
 @SpringBootApplication
 public class TestApplication {
     public static void main(String[] args) {
