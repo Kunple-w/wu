@@ -16,16 +16,6 @@
         <dependency>
             <groupId>com.github</groupId>
             <artifactId>wu-core</artifactId>
-<!--            <exclusions>-->
-<!--                <exclusion>-->
-<!--                    <artifactId>slf4j-log4j12</artifactId>-->
-<!--                    <groupId>org.slf4j</groupId>-->
-<!--                </exclusion>-->
-<!--                <exclusion>-->
-<!--                    <artifactId>log4j</artifactId>-->
-<!--                    <groupId>log4j</groupId>-->
-<!--                </exclusion>-->
-<!--            </exclusions>-->
         </dependency>
 
         <!-- https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter -->
@@ -51,6 +41,35 @@
         </dependency>
 
 
+        <dependency>
+            <groupId>com.github</groupId>
+            <artifactId>wu-core</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-configuration-processor</artifactId>
+            <version>${springboot.version}</version>
+            <optional>true</optional>
+        </dependency>
+
     </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <configuration>
+                    <excludes>
+                        <exclude>
+                            <groupId>org.springframework.boot</groupId>
+                            <artifactId>spring-boot-configuration-processor</artifactId>
+                        </exclude>
+                    </excludes>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 
 </project>

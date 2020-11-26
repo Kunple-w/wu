@@ -4,3 +4,12 @@ server:
 logging:
   level:
     root: debug
+
+wu:
+  registry:
+    host: localhost
+    port: 2181
+    protocol: zookeeper
+  service:
+    host: localhost
+    port: 11996

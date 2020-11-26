@@ -11,6 +11,10 @@ import lombok.Data;
  */
 @Data
 public class RegistryConfig {
+
+    public RegistryConfig() {
+    }
+
     public RegistryConfig(String address) {
         URL url = URL.of(address);
         this.url = url;
@@ -21,6 +25,7 @@ public class RegistryConfig {
         this.password = url.getPassword();
         this.timeout = Integer.parseInt(url.getParam(URLConstant.TIMEOUT_KEY, "5000"));
     }
+
 
     private String protocol;
     private String host;
