@@ -1,9 +1,7 @@
 package com.github.wu.spring;
 
 
-import com.github.wu.core.rpc.Reference;
-import com.github.wu.core.rpc.config.RegistryConfig;
-import com.github.wu.core.rpc.config.ServiceConfig;
+import com.github.wu.core.rpc.config.ReferenceConfig;
 import com.github.wu.core.transport.Client;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,14 +11,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
-import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.stereotype.Component;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
-import java.net.InetSocketAddress;
-import java.util.Map;
-import java.util.Set;
+
 
 
 /**
@@ -35,8 +30,6 @@ public class WuInjectBeanPostProcessor implements BeanPostProcessor, Application
     private WuConfigurationProperties configurationProperties;
 
     private ApplicationContext applicationContext;
-
-    private Client client;
 
 
     @Override
@@ -60,20 +53,11 @@ public class WuInjectBeanPostProcessor implements BeanPostProcessor, Application
         }
         try {
             Object fieldBean;
-            RegistryConfig registry = configurationProperties.getRegistry();
-            if (client == null) {
-                client = new Client(new InetSocketAddress(registry.getHost(),registry.getPort()));
-            }
-            fieldBean = new Reference(client, field.getType()).refer();
-            /*try {
+            try {
                 fieldBean = applicationContext.getBean(field.getType());
             } catch (NoSuchBeanDefinitionException e) {
-                RegistryConfig registry = configurationProperties.getRegistry();
-                if (client == null) {
-                    client = new Client(new InetSocketAddress(registry.getPort()));
-                }
-                fieldBean = new Reference(client, bean.getClass()).refer();
-            }*/
+                fieldBean = new ReferenceConfig(field.getType(), configurationProperties.getRegistry()).refer();
+            }
             field.set(bean, fieldBean);
 
         } catch (IllegalAccessException e) {
@@ -99,24 +83,4 @@ public class WuInjectBeanPostProcessor implements BeanPostProcessor, Application
         this.applicationContext = applicationContext;
     }
 
-    //    @Override
-    public void onApplicationEvent(ContextRefreshedEvent event) {
-        RegistryConfig registry = configurationProperties.getRegistry();
-        ServiceConfig service = configurationProperties.getService();
-        if (client == null) {
-            client = new Client(new InetSocketAddress(registry.getPort()));
-        }
-        Class<? extends Annotation> annotationClass = WuInject.class;
-        Map<String, Object> beanWithAnnotation = applicationContext.getBeansWithAnnotation(annotationClass);
-        Set<Map.Entry<String, Object>> entitySet = beanWithAnnotation.entrySet();
-        for (Map.Entry<String, Object> entry : entitySet) {
-            Class<? extends Object> clazz = entry.getValue().getClass();
-            Field[] fields = clazz.getDeclaredFields();
-            for (Field field : fields) {
-                if (hasAnnotation(field.getDeclaredAnnotations(), WuInject.class.getName())) {
-                    setField(entry.getValue(), field);
-                }
-            }
-        }
-    }
 }
