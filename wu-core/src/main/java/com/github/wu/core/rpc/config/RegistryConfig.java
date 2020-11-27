@@ -34,4 +34,11 @@ public class RegistryConfig {
     private String password;
     private int timeout;
     private URL url;
+
+    public URL getUrl() {
+        if (url == null) {
+            url = new URL(protocol, host, port, "");
+        }
+        return url;
+    }
 }

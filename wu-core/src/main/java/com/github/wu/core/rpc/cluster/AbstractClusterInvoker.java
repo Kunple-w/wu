@@ -61,7 +61,7 @@ public abstract class AbstractClusterInvoker<T> implements ClusterInvoker<T> {
     public ApiResult call(Invocation invocation) {
         List<Invoker<T>> invokers = registry.lookup(invocation);
         if (invokers == null || invokers.isEmpty()) {
-            throw new ServiceNotRegisterException("service " + invocation.getServiceName() + "not found");
+            throw new ServiceNotRegisterException("service " + invocation.getServiceName() + " not found");
         }
         LoadBalance loadBalance = initLoadBalance(invokers);
         return call(invocation, invokers, loadBalance);

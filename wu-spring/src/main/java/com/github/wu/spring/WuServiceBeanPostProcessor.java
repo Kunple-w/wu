@@ -2,24 +2,18 @@ package com.github.wu.spring;
 
 import com.github.wu.core.rpc.config.ExportConfig;
 import org.springframework.beans.BeansException;
-import org.springframework.beans.factory.BeanClassLoaderAware;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
-import org.springframework.beans.factory.support.BeanDefinitionRegistry;
-import org.springframework.beans.factory.support.BeanDefinitionRegistryPostProcessor;
 import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.ApplicationListener;
-import org.springframework.context.EnvironmentAware;
-import org.springframework.context.ResourceLoaderAware;
-import org.springframework.context.annotation.ClassPathBeanDefinitionScanner;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.core.annotation.AnnotatedElementUtils;
 import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.core.env.Environment;
 import org.springframework.core.io.ResourceLoader;
-import org.springframework.core.type.filter.AnnotationTypeFilter;
 import org.springframework.stereotype.Component;
 import org.springframework.util.ClassUtils;
 
@@ -31,7 +25,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * @author wangyongxu
  */
 @Component
-public class WuServiceBeanPostProcessor implements BeanPostProcessor, ApplicationListener<ContextRefreshedEvent> {
+public class WuServiceBeanPostProcessor implements BeanPostProcessor, ApplicationContextAware, ApplicationListener<ContextRefreshedEvent> {
 
     private ApplicationContext applicationContext;
 
@@ -83,6 +77,10 @@ public class WuServiceBeanPostProcessor implements BeanPostProcessor, Applicatio
         exportConfig.export();
     }
 
+    @Override
+    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+        this.applicationContext = applicationContext;
+    }
 
     @Override
     public void onApplicationEvent(ContextRefreshedEvent event) {
@@ -91,5 +89,6 @@ public class WuServiceBeanPostProcessor implements BeanPostProcessor, Applicatio
                 export(bean);
             }
         }
+        applicationContext.publishEvent(new WuExportedEvent());
     }
 }
