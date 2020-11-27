@@ -46,12 +46,11 @@ public class WuServiceHandler implements ApplicationListener<ContextRefreshedEve
         for (Map.Entry<String, Object> entry : entitySet) {
             Class<? extends Object> clazz = entry.getValue().getClass();
             WuService wuService = AnnotationUtils.findAnnotation(clazz, WuService.class);
-            Exporter exporter = new Exporter(wuService.interfaceClass() == Void.class ? clazz : wuService.interfaceClass(), entry.getValue());
+            Exporter exporter = new Exporter(wuService.interfaceClass() == Void.class ? clazz.getInterfaces()[0]: wuService.interfaceClass(), entry.getValue());
             exporter.setPort(service.getPort());
             exporter.setProtocol(registry.getProtocol());
             exporter.setServer(server);
             exporter.export();
-            System.out.println(exporter.getURL().toString());
         }
 
     }
