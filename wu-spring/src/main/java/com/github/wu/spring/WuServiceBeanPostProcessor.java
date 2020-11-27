@@ -2,19 +2,13 @@ package com.github.wu.spring;
 
 import com.github.wu.core.rpc.config.ExportConfig;
 import org.springframework.beans.BeansException;
-import org.springframework.beans.factory.BeanFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanPostProcessor;
-import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.core.annotation.AnnotatedElementUtils;
 import org.springframework.core.annotation.AnnotationUtils;
-import org.springframework.core.env.Environment;
-import org.springframework.core.io.ResourceLoader;
-import org.springframework.stereotype.Component;
 import org.springframework.util.ClassUtils;
 
 import java.util.HashMap;
@@ -24,27 +18,18 @@ import java.util.concurrent.atomic.AtomicBoolean;
 /**
  * @author wangyongxu
  */
-@Component
 public class WuServiceBeanPostProcessor implements BeanPostProcessor, ApplicationContextAware, ApplicationListener<ContextRefreshedEvent> {
 
     private ApplicationContext applicationContext;
 
-    private Environment environment;
-
-    private ClassLoader classLoader;
-
-    private ResourceLoader resourceLoader;
-
-    private ConfigurableListableBeanFactory beanFactory;
-
-    private BeanFactory beanFactory2;
-
-    @Autowired
-    private WuConfigurationProperties wuConfigurationProperties;
-
     private Map<String, Object> needExportBean = new HashMap<>();
 
     private AtomicBoolean started = new AtomicBoolean(false);
+    private WuConfigurationProperties wuConfigurationProperties;
+
+    public WuServiceBeanPostProcessor(WuConfigurationProperties wuConfigurationProperties) {
+        this.wuConfigurationProperties = wuConfigurationProperties;
+    }
 
     @Override
     public Object postProcessAfterInitialization(Object bean, String beanName) throws BeansException {
