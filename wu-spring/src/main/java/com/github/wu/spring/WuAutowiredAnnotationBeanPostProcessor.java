@@ -71,11 +71,11 @@ public class WuAutowiredAnnotationBeanPostProcessor implements ApplicationListen
                 Object[] arguments = new Object[parameters.length];
                 for (int i = 0; i < parameters.length; i++) {
                     Object value;
-                    /*try {
+                    try {
                         value = applicationContext.getBean(parameters[i].getType());
                     } catch (NoSuchBeanDefinitionException e) {
-
-                    }*/value = getOrCreateRef(parameters[i].getType());
+                        value = getOrCreateRef(parameters[i].getType());
+                    }
                     arguments[i] = value;
                 }
                 ReflectionUtils.makeAccessible(method);
