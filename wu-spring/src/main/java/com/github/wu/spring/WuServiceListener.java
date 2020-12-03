@@ -20,13 +20,15 @@ import java.util.Set;
  *
  * @author qiankewei
  */
-@Component
-public class WuServiceHandler implements ApplicationListener<ContextRefreshedEvent>, ApplicationContextAware {
+public class WuServiceListener implements ApplicationListener<ContextRefreshedEvent>, ApplicationContextAware {
 
-    @Autowired
     private WuConfigurationProperties configurationProperties;
 
     private ApplicationContext applicationContext;
+
+    public WuServiceListener(WuConfigurationProperties wuConfigurationProperties) {
+        this.configurationProperties = wuConfigurationProperties;
+    }
 
 
     @Override

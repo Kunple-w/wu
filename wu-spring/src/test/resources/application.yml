@@ -9,9 +9,9 @@ logging:
 
 wu:
   registry:
-    protocol: zookeeper
     host: localhost
     port: 2181
+    protocol: zookeeper
   service:
     host: localhost
     port: 11996

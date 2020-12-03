@@ -62,6 +62,7 @@ public class ReferenceConfig<T> implements LifeCycle {
 
     @Override
     public void destroy() {
+        invoker.destroy();
     }
 
 
