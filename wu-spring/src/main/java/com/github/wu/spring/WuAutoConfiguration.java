@@ -2,11 +2,14 @@ package com.github.wu.spring;
 
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.FilterType;
 
 /**
  * @author wangyongxu
  */
 @EnableConfigurationProperties(WuConfigurationProperties.class)
+@ComponentScan(includeFilters = @ComponentScan.Filter(type = FilterType.ANNOTATION, classes = WuService.class))
 public class WuAutoConfiguration {
 
     @Bean
