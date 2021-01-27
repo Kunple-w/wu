@@ -61,4 +61,13 @@ public class RemoteInvoker<T> implements Invoker<T> {
     public void destroy() {
         client.disConnect();
     }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("url: ").append(url);
+        sb.append(", ");
+        sb.append(interfaceClass);
+        return sb.toString();
+    }
 }

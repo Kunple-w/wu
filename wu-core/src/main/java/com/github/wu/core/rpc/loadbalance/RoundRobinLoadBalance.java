@@ -22,4 +22,9 @@ public class RoundRobinLoadBalance implements LoadBalance {
         }
         return tInvoker;
     }
+
+    @Override
+    public String toString() {
+        return "roundRobin, current: " + current;
+    }
 }

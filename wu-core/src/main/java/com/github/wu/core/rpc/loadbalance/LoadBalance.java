@@ -19,4 +19,5 @@ public interface LoadBalance {
 
     <T> Invoker<T> select(List<Invoker<T>> invokers, URL url, Invocation invocation);
 
+
 }

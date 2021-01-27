@@ -20,7 +20,7 @@ import java.util.List;
  */
 public abstract class AbstractClusterInvoker<T> implements ClusterInvoker<T> {
 
-    private final Logger logger = LoggerFactory.getLogger(getClass());
+    protected final Logger logger = LoggerFactory.getLogger(getClass());
 
 
     /**
@@ -113,5 +113,16 @@ public abstract class AbstractClusterInvoker<T> implements ClusterInvoker<T> {
     public void destroy() {
         registerService.destroy();
         registry.destroy();
+    }
+
+    @Override
+    public String toString() {
+
+        return "AbstractClusterInvoker{" +
+                "registryUrl=" + registryUrl +
+                ", interfaceClass=" + interfaceClass +
+                ", registerService=" + registerService +
+                ", registry=" + registry +
+                '}';
     }
 }

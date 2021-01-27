@@ -18,4 +18,9 @@ public class RandomLoadBalance implements LoadBalance {
         int i = RandomUtils.nextInt(0, invokers.size());
         return invokers.get(i);
     }
+
+    @Override
+    public String toString() {
+        return "random";
+    }
 }

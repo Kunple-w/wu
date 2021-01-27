@@ -39,9 +39,9 @@ public class WuServiceListener implements ApplicationListener<ContextRefreshedEv
         Map<String, Object> beanWithAnnotation = applicationContext.getBeansWithAnnotation(annotationClass);
         Set<Map.Entry<String, Object>> entitySet = beanWithAnnotation.entrySet();
         for (Map.Entry<String, Object> entry : entitySet) {
-            Class<? extends Object> clazz = entry.getValue().getClass();
+            Class<?> clazz = entry.getValue().getClass();
             WuService wuService = AnnotationUtils.findAnnotation(clazz, WuService.class);
-            ExportConfig exportConfig = new ExportConfig(wuService.interfaceClass() == Void.class ? clazz.getInterfaces()[0]: wuService.interfaceClass(), entry.getValue(), registry, service);
+            ExportConfig<?> exportConfig = new ExportConfig(wuService.interfaceClass() == Void.class ? clazz.getInterfaces()[0]: wuService.interfaceClass(), entry.getValue(), registry, service);
             exportConfig.export();
         }
 

@@ -16,4 +16,9 @@ public class WeightedLoadBalance implements LoadBalance {
     public <T> Invoker<T> select(List<Invoker<T>> invokers, URL url, Invocation invocation) {
         throw new UnsupportedOperationException("not weighted");
     }
+
+    @Override
+    public String toString() {
+        return "weight";
+    }
 }
