@@ -2,6 +2,7 @@ package com.github.wu.core.rpc.cluster;
 
 import com.github.wu.common.URL;
 import com.github.wu.core.rpc.Invoker;
+import com.github.wu.core.rpc.RpcContext;
 import com.github.wu.core.rpc.loadbalance.LoadBalance;
 import com.github.wu.core.transport.ApiResult;
 import com.github.wu.core.transport.Invocation;
@@ -28,6 +29,7 @@ public class BroadcastClusterInvoker<T> extends AbstractClusterInvoker<T> {
         for (Invoker<T> invoker : invokers) {
             ans = invoker.call(invocation);
             logger.debug("node invoke finish, invoker {}, invocation: {}, lb: {}, result: {}", invoker, invocation, loadBalance, ans);
+            RpcContext.get().getResponse().put(invoker.getURL(), ans);
             if (!ans.isSuccess()) {
                 failedResult = ans;
                 logger.warn("invoker invoke failed, invoker {}, invocation: {}, lb: {}, result: {}", invoker, invocation, loadBalance, ans);

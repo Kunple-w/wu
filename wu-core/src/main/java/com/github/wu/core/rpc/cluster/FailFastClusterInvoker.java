@@ -2,6 +2,7 @@ package com.github.wu.core.rpc.cluster;
 
 import com.github.wu.common.URL;
 import com.github.wu.core.rpc.Invoker;
+import com.github.wu.core.rpc.RpcContext;
 import com.github.wu.core.rpc.loadbalance.LoadBalance;
 import com.github.wu.core.transport.ApiResult;
 import com.github.wu.core.transport.Invocation;
@@ -20,6 +21,8 @@ public class FailFastClusterInvoker<T> extends AbstractClusterInvoker<T> {
     @Override
     public ApiResult call(Invocation invocation, List<Invoker<T>> invokers, LoadBalance loadBalance) {
         Invoker<T> invoker = select(loadBalance, invokers, invocation);
-        return invoker.call(invocation);
+        ApiResult apiResult = invoker.call(invocation);
+        RpcContext.get().getResponse().put(invoker.getURL(), apiResult);
+        return apiResult;
     }
 }

@@ -3,13 +3,11 @@ package com.github.wu.core.rpc.cluster;
 import com.github.wu.common.URL;
 import com.github.wu.common.exception.WuRuntimeException;
 import com.github.wu.core.rpc.Invoker;
-import com.github.wu.core.rpc.exception.ServiceNotRegisterException;
+import com.github.wu.core.rpc.RpcContext;
 import com.github.wu.core.rpc.exception.ServiceUnavailableException;
 import com.github.wu.core.rpc.loadbalance.LoadBalance;
 import com.github.wu.core.transport.ApiResult;
 import com.github.wu.core.transport.Invocation;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.List;
 
@@ -17,7 +15,6 @@ import java.util.List;
  * @author wangyongxu
  */
 public class FailoverClusterInvoker<T> extends AbstractClusterInvoker<T> {
-    private static final Logger logger = LoggerFactory.getLogger(FailoverClusterInvoker.class);
 
     public FailoverClusterInvoker(URL registryUrl, Class<T> interfaceClass) {
         this.registryUrl = registryUrl;
@@ -41,6 +38,7 @@ public class FailoverClusterInvoker<T> extends AbstractClusterInvoker<T> {
                 invokers.remove(invoker);
                 return failover(invocation, invokers, loadBalance);
             }
+            RpcContext.get().getResponse().put(invoker.getURL(), apiResult);
             return apiResult;
         } catch (WuRuntimeException e) {
             logger.error("invoker call exception, try failover", e);
