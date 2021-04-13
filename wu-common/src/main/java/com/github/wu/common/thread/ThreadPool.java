@@ -1,4 +1,4 @@
-package com.github.wu.core.thread;
+package com.github.wu.common.thread;
 
 /**
  * @author wangyongxu

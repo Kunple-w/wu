@@ -3,7 +3,7 @@ package com.github.wu.core.rpc.config;
 import com.github.wu.common.LifeCycle;
 import com.github.wu.common.URL;
 import com.github.wu.core.rpc.Invoker;
-import com.github.wu.core.rpc.JdkProxyFactory;
+import com.github.wu.core.rpc.proxy.JdkProxyFactory;
 import com.github.wu.core.rpc.cluster.FailFastClusterInvoker;
 
 /**

@@ -1,4 +1,6 @@
-package com.github.wu.core.rpc;
+package com.github.wu.core.rpc.proxy;
+
+import com.github.wu.core.rpc.Invoker;
 
 /**
  * @author wangyongxu
