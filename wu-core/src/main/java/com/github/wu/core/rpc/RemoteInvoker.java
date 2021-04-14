@@ -13,11 +13,14 @@ public class RemoteInvoker<T> implements Invoker<T> {
 
     private final EndPointFactory endPointFactory = new EndPointFactoryImpl();
 
+    private final Object lock = new Object();
+
     private final URL url;
 
     private final Class<T> interfaceClass;
 
     private Client client;
+
 
     public RemoteInvoker(URL url, Class<T> interfaceClass) {
         this.url = url;
@@ -52,8 +55,10 @@ public class RemoteInvoker<T> implements Invoker<T> {
 
     @Override
     public void init() {
-        if (client == null) {
-            client = endPointFactory.createClient(new InetSocketAddress(url.getHost(), url.getPort()));
+        synchronized (lock) {
+            if (client == null) {
+                client = endPointFactory.createClient(new InetSocketAddress(url.getHost(), url.getPort()));
+            }
         }
     }
 
