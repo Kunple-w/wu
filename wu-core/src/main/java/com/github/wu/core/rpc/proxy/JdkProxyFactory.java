@@ -1,7 +1,6 @@
 package com.github.wu.core.rpc.proxy;
 
 import com.github.wu.core.rpc.Invoker;
-import com.github.wu.core.rpc.InvokerInvocationHandler;
 
 import java.lang.reflect.Proxy;
 

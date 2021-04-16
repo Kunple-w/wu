@@ -11,6 +11,7 @@ public class ApiResult {
 
     private static final int SUCCESS = 0;
     private static final int FAILED = -1;
+    private static final int EMPTY = -2;
 
     private Object value;
 
@@ -29,6 +30,14 @@ public class ApiResult {
 
     public static ApiResult success(Object value) {
         return new ApiResult(value, SUCCESS, null);
+    }
+
+    public static ApiResult empty() {
+        return new ApiResult(null, EMPTY, null);
+    }
+
+    public static ApiResult success() {
+        return new ApiResult(null, SUCCESS, null);
     }
 
     public static ApiResult exception(Throwable throwable) {
