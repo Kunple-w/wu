@@ -20,7 +20,9 @@ public interface WuFilter {
      * @return {@link ApiResult}
      * @author wangyongxu
      */
-    boolean before(Invocation invocation, ApiResult apiResult) throws Exception;
+    default boolean before(Invocation invocation, ApiResult apiResult) throws Exception {
+        return true;
+    }
 
     /**
      * after
@@ -32,7 +34,9 @@ public interface WuFilter {
      * @param apiResult  : 结果
      * @author wangyongxu
      */
-    void after(Invocation invocation, ApiResult apiResult) throws Exception;
+    default void after(Invocation invocation, ApiResult apiResult) throws Exception {
+
+    }
 
     /**
      * afterComplete
@@ -44,6 +48,8 @@ public interface WuFilter {
      * @param ex         : 异常，如果没有异常，则为空
      * @author wangyongxu
      */
-    void complete(Invocation invocation, ApiResult apiResult, Exception ex);
+    default void complete(Invocation invocation, ApiResult apiResult, Exception ex) {
+
+    }
 
 }

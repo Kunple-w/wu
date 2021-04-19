@@ -2,6 +2,7 @@ package com.github.wu.core.rpc.config;
 
 import com.github.wu.core.UserService;
 import com.github.wu.core.UserServiceImpl;
+import com.github.wu.core.rpc.filter.FilterRegistry;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,7 +24,7 @@ public class ReferenceConfigTest {
         ExportConfig<UserService> exportConfig = new ExportConfig<>(UserService.class, new UserServiceImpl(), registryConfig, serviceConfig);
         exportConfig.export();
 
-        ReferenceConfig<UserService> referenceConfig = new ReferenceConfig<>(UserService.class, registryConfig);
+        ReferenceConfig<UserService> referenceConfig = new ReferenceConfig<>(UserService.class, registryConfig, new FilterRegistry());
         UserService userService = referenceConfig.refer();
 
         assertEquals("hello world", userService.hello("world"), "远程调用失败");

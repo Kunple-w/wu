@@ -27,8 +27,9 @@ public class InvokerInvocationHandler implements InvocationHandler {
 
     // TODO: 2021-04-16 08:18:54 过滤器注册器 by wangyongxu
 
-    public InvokerInvocationHandler(Invoker<?> invoker) {
+    public InvokerInvocationHandler(Invoker<?> invoker, FilterRegistry filterRegistry) {
         this.invoker = invoker;
+        this.filterRegistry = filterRegistry;
     }
 
     @Override
@@ -60,6 +61,7 @@ public class InvokerInvocationHandler implements InvocationHandler {
             result = invoker.call(invocation);
             filterChain.applyAfter(invocation, result);
         } catch (Exception e) {
+            result.setThrowable(e);
             filterChain.applyComplete(invocation, result, e);
         }
         return result;

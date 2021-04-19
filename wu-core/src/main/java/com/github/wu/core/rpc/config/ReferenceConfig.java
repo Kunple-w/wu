@@ -3,8 +3,9 @@ package com.github.wu.core.rpc.config;
 import com.github.wu.common.LifeCycle;
 import com.github.wu.common.URL;
 import com.github.wu.core.rpc.Invoker;
-import com.github.wu.core.rpc.proxy.JdkProxyFactory;
 import com.github.wu.core.rpc.cluster.FailFastClusterInvoker;
+import com.github.wu.core.rpc.filter.FilterRegistry;
+import com.github.wu.core.rpc.proxy.JdkProxyFactory;
 
 /**
  * @author wangyongxu
@@ -15,7 +16,7 @@ public class ReferenceConfig<T> implements LifeCycle {
     /**
      * interface class
      */
-    private  Class<T> interfaceClazz;
+    private Class<T> interfaceClazz;
 
     private T ref;
 
@@ -28,9 +29,16 @@ public class ReferenceConfig<T> implements LifeCycle {
 
     private final JdkProxyFactory proxyFactory = new JdkProxyFactory();
 
-    public ReferenceConfig(Class<T> interfaceClazz, RegistryConfig registryConfig) {
+    private FilterRegistry filterRegistry;
+
+//    public ReferenceConfig(Class<T> interfaceClazz, RegistryConfig registryConfig) {
+//        this(interfaceClazz, registryConfig, new FilterRegistry());
+//    }
+
+    public ReferenceConfig(Class<T> interfaceClazz, RegistryConfig registryConfig, FilterRegistry filterRegistry) {
         this.interfaceClazz = interfaceClazz;
         this.registryConfig = registryConfig;
+        this.filterRegistry = filterRegistry;
     }
 
 
@@ -56,7 +64,7 @@ public class ReferenceConfig<T> implements LifeCycle {
             invoker = new FailFastClusterInvoker<>(registryURL, interfaceClazz);
             invoker.init();
         }
-        ref = proxyFactory.getProxy(invoker, new Class[]{interfaceClazz});
+        ref = proxyFactory.getProxy(invoker, new Class[]{interfaceClazz}, filterRegistry);
     }
 
 

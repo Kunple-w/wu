@@ -13,4 +13,12 @@ import java.lang.annotation.*;
 @Inherited
 public @interface WuInject {
 
+    /**
+     * 如果本地的spring容器中存在时，不使用本地的bean
+     *
+     * @return boolean
+     * @author wangyongxu
+     */
+    boolean usingLocal() default false;
+
 }

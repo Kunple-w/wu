@@ -1,10 +1,11 @@
 package com.github.wu.spring;
 
 import com.github.wu.core.rpc.config.ReferenceConfig;
+import com.github.wu.core.rpc.filter.FilterRegistry;
+import com.github.wu.core.rpc.filter.WuFilter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
-import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
@@ -13,6 +14,7 @@ import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextClosedEvent;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.core.BridgeMethodResolver;
+import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 import org.springframework.util.ClassUtils;
 import org.springframework.util.ReflectionUtils;
 
@@ -21,7 +23,9 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.lang.reflect.Parameter;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * @author wangyongxu
@@ -45,9 +49,9 @@ public class WuAutowiredAnnotationBeanPostProcessor implements ApplicationListen
             WuInject fieldAnnotation = field.getAnnotation(WuInject.class);
             if (fieldAnnotation != null) {
                 Object value;
-                try {
+                if (fieldAnnotation.usingLocal()) {
                     value = applicationContext.getBean(field.getType());
-                } catch (NoSuchBeanDefinitionException e) {
+                } else {
                     value = getOrCreateRef(field.getType());
                 }
                 ReflectionUtils.makeAccessible(field);
@@ -71,9 +75,9 @@ public class WuAutowiredAnnotationBeanPostProcessor implements ApplicationListen
                 Object[] arguments = new Object[parameters.length];
                 for (int i = 0; i < parameters.length; i++) {
                     Object value;
-                    try {
+                    if (methodAnnotation.usingLocal()) {
                         value = applicationContext.getBean(parameters[i].getType());
-                    } catch (NoSuchBeanDefinitionException e) {
+                    } else {
                         value = getOrCreateRef(parameters[i].getType());
                     }
                     arguments[i] = value;
@@ -105,10 +109,21 @@ public class WuAutowiredAnnotationBeanPostProcessor implements ApplicationListen
     private Object getOrCreateRef(Class<?> interfaceClass) {
         ReferenceConfig<?> referenceConfig = cachedReference.get(interfaceClass);
         if (referenceConfig == null) {
-            referenceConfig = new ReferenceConfig<>(interfaceClass, wuConfigurationProperties.getRegistry());
+            FilterRegistry filterRegistry = getFilterRegistry();
+            referenceConfig = new ReferenceConfig<>(interfaceClass, wuConfigurationProperties.getRegistry(), filterRegistry);
             cachedReference.put(interfaceClass, referenceConfig);
         }
         return referenceConfig.refer();
+    }
+
+    private FilterRegistry getFilterRegistry() {
+        Map<String, WuFilter> beansOfType = applicationContext.getBeansOfType(WuFilter.class);
+        List<WuFilter> collect = beansOfType.values().stream()
+                .sorted(AnnotationAwareOrderComparator.INSTANCE)
+                .collect(Collectors.toList());
+        FilterRegistry filterRegistry = new FilterRegistry();
+        filterRegistry.setInterceptors(collect);
+        return filterRegistry;
     }
 
 
@@ -122,7 +137,9 @@ public class WuAutowiredAnnotationBeanPostProcessor implements ApplicationListen
     }
 
     private void startReference() {
+        logger.debug("init reference config start, size: {}, keys: {}", cachedReference.size(), cachedReference.keySet());
         cachedReference.values().forEach(ReferenceConfig::init);
+        logger.debug("init reference config end. ");
 
     }
 
