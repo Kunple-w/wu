@@ -56,4 +56,9 @@ public class ApiResult {
     public boolean isSuccess() {
         return code == SUCCESS;
     }
+
+    @Override
+    public String toString() {
+        return "ApiResult=[value=" + value.toString() + ", code=" + code + ", throwable=" + throwable.getMessage() + "]";
+    }
 }

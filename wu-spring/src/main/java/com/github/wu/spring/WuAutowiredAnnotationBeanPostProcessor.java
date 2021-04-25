@@ -3,6 +3,7 @@ package com.github.wu.spring;
 import com.github.wu.core.rpc.config.ReferenceConfig;
 import com.github.wu.core.rpc.filter.FilterRegistry;
 import com.github.wu.core.rpc.filter.WuFilter;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
@@ -137,7 +138,7 @@ public class WuAutowiredAnnotationBeanPostProcessor implements ApplicationListen
     }
 
     private void startReference() {
-        logger.debug("init reference config start, size: {}, keys: {}", cachedReference.size(), cachedReference.keySet());
+        logger.debug("init reference config start, size: {}, keys: {}", cachedReference.size(), StringUtils.join(cachedReference.keySet()));
         cachedReference.values().forEach(ReferenceConfig::init);
         logger.debug("init reference config end. ");
 
