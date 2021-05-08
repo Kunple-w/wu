@@ -2,6 +2,7 @@ package com.github.wu.core.rpc.config;
 
 import com.github.wu.common.URL;
 import com.github.wu.core.rpc.Exporter;
+import com.github.wu.core.rpc.filter.FilterRegistry;
 import com.github.wu.core.transport.EndPointFactory;
 import com.github.wu.core.transport.EndPointFactoryImpl;
 import com.github.wu.core.transport.Server;
@@ -26,6 +27,8 @@ public class ExportConfig<T> extends AbstractRegistryHandler {
     private Exporter<T> exporter;
 
     private ServiceConfig serviceConfig;
+
+    private FilterRegistry filterRegistry;
 
 
     private final EndPointFactory endPointFactory = new EndPointFactoryImpl();

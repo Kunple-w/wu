@@ -2,6 +2,7 @@ package com.github.wu.spring;
 
 import com.github.wu.core.rpc.config.ReferenceConfig;
 import com.github.wu.core.rpc.filter.FilterRegistry;
+import com.github.wu.core.rpc.filter.FilterScope;
 import com.github.wu.core.rpc.filter.WuFilter;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -120,6 +121,7 @@ public class WuAutowiredAnnotationBeanPostProcessor implements ApplicationListen
     private FilterRegistry getFilterRegistry() {
         Map<String, WuFilter> beansOfType = applicationContext.getBeansOfType(WuFilter.class);
         List<WuFilter> collect = beansOfType.values().stream()
+                .filter(wuFilter -> FilterScope.client(wuFilter.scope()))
                 .sorted(AnnotationAwareOrderComparator.INSTANCE)
                 .collect(Collectors.toList());
         FilterRegistry filterRegistry = new FilterRegistry();

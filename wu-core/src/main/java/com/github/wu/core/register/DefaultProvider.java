@@ -40,6 +40,7 @@ public class DefaultProvider<T> extends AbstractProvider<T> {
             return ApiResult.exception(new ServiceNoSuchMethodException(invocation.toString() + " not existed"));
         }
         try {
+            // TODO: 2021-05-08 06:05:12 server filter使用代理生成 by wangyongxu
             Object result = method.invoke(impl, invocation.getArgs());
             return ApiResult.success(result);
         } catch (InvocationTargetException e) {

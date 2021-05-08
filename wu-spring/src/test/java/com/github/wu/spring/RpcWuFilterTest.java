@@ -1,5 +1,6 @@
 package com.github.wu.spring;
 
+import com.github.wu.common.exception.RpcException;
 import com.github.wu.core.rpc.filter.WuFilter;
 import com.github.wu.core.transport.ApiResult;
 import com.github.wu.core.transport.Invocation;
@@ -34,7 +35,7 @@ public class RpcWuFilterTest {
 
     @Test
     public void testWuService() {
-        Assertions.assertThrows(IllegalAccessException.class, () -> emailService.echo("wu", "hello world"), "user auth error");
+        Assertions.assertThrows(RpcException.class, () -> emailService.echo("wu", "hello world"), "user auth error");
     }
 
 
@@ -45,23 +46,23 @@ public class RpcWuFilterTest {
         private static final Logger logger = LoggerFactory.getLogger(AuthFilter.class);
 
         @Override
-        public boolean before(Invocation invocation, ApiResult apiResult) throws Exception {
+        public boolean before(Invocation invocation, ApiResult apiResult) throws RpcException {
             logger.info("invocation: {}", invocation);
 //            boolean b = RandomUtils.nextBoolean();
 //            if (b) {
 //                logger.info("success! ");
 //                return true;
 //            }
-            throw new IllegalAccessException("user auth error");
+            throw new RpcException("user auth error");
         }
 
         @Override
-        public void after(Invocation invocation, ApiResult apiResult) throws Exception {
+        public void after(Invocation invocation, ApiResult apiResult) throws RpcException {
             logger.info("after,result: {} ", apiResult);
         }
 
         @Override
-        public void complete(Invocation invocation, ApiResult apiResult, Exception ex) {
+        public void complete(Invocation invocation, ApiResult apiResult, RpcException ex) {
             logger.info("complete, result: {}", apiResult);
         }
     }

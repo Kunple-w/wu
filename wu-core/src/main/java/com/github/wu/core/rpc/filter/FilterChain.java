@@ -1,5 +1,6 @@
 package com.github.wu.core.rpc.filter;
 
+import com.github.wu.common.exception.RpcException;
 import com.github.wu.core.transport.ApiResult;
 import com.github.wu.core.transport.Invocation;
 import org.apache.commons.lang3.ObjectUtils;
@@ -29,7 +30,7 @@ public class FilterChain {
         return filterArray;
     }
 
-    public boolean applyBefore(Invocation invocation, ApiResult apiResult) throws Exception {
+    public boolean applyBefore(Invocation invocation, ApiResult apiResult) throws RpcException {
         WuFilter[] filters = getFilterArray();
         if (ObjectUtils.isNotEmpty(filters)) {
             for (int i = 0; i < filters.length; i++) {
@@ -53,7 +54,7 @@ public class FilterChain {
      * @param apiResult  : 结果
      * @author wangyongxu
      */
-    public void applyAfter(Invocation invocation, ApiResult apiResult) throws Exception {
+    public void applyAfter(Invocation invocation, ApiResult apiResult) throws RpcException {
         WuFilter[] filters = getFilterArray();
         if (ObjectUtils.isNotEmpty(filters)) {
             for (int i = filters.length - 1; i >= 0; i--) {
@@ -83,7 +84,7 @@ public class FilterChain {
      * @param ex         : 异常，如果after中没有抛出异常，则为null
      * @author wangyongxu
      */
-    public void applyComplete(Invocation invocation, ApiResult apiResult, Exception ex) {
+    public void applyComplete(Invocation invocation, ApiResult apiResult, RpcException ex) {
         WuFilter[] filters = getFilterArray();
         if (ObjectUtils.isNotEmpty(filters)) {
             for (int i = filterIndex; i >= 0; i--) {

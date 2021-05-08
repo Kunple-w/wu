@@ -1,5 +1,6 @@
 package com.github.wu.core.rpc.proxy;
 
+import com.github.wu.common.exception.RpcException;
 import com.github.wu.core.rpc.Invoker;
 import com.github.wu.core.rpc.filter.FilterChain;
 import com.github.wu.core.rpc.filter.FilterRegistry;
@@ -60,7 +61,7 @@ public class InvokerInvocationHandler implements InvocationHandler {
             }
             result = invoker.call(invocation);
             filterChain.applyAfter(invocation, result);
-        } catch (Exception e) {
+        } catch (RpcException e) {
             result.setThrowable(e);
             filterChain.applyComplete(invocation, result, e);
         }

@@ -1,5 +1,6 @@
 package com.github.wu.core.rpc.filter;
 
+import com.github.wu.common.exception.RpcException;
 import com.github.wu.core.transport.ApiResult;
 import com.github.wu.core.transport.Invocation;
 
@@ -20,7 +21,7 @@ public interface WuFilter {
      * @return {@link ApiResult}
      * @author wangyongxu
      */
-    default boolean before(Invocation invocation, ApiResult apiResult) throws Exception {
+    default boolean before(Invocation invocation, ApiResult apiResult) throws RpcException {
         return true;
     }
 
@@ -34,7 +35,7 @@ public interface WuFilter {
      * @param apiResult  : 结果
      * @author wangyongxu
      */
-    default void after(Invocation invocation, ApiResult apiResult) throws Exception {
+    default void after(Invocation invocation, ApiResult apiResult) throws RpcException {
 
     }
 
@@ -48,8 +49,20 @@ public interface WuFilter {
      * @param ex         : 异常，如果没有异常，则为空
      * @author wangyongxu
      */
-    default void complete(Invocation invocation, ApiResult apiResult, Exception ex) {
+    default void complete(Invocation invocation, ApiResult apiResult, RpcException ex) {
 
+    }
+
+    /**
+     * 设置该filter的作用域
+     * <p>
+     * 默认是BOTH
+     *
+     * @return com.github.wu.core.rpc.filter.FilterScope
+     * @author wangyongxu
+     */
+    default FilterScope[] scope() {
+        return new FilterScope[]{FilterScope.CLIENT, FilterScope.SERVER};
     }
 
 }

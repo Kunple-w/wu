@@ -7,6 +7,9 @@ package com.github.wu.common.exception;
  */
 public class WuRuntimeException extends RuntimeException {
 
+    public WuRuntimeException() {
+    }
+
     public WuRuntimeException(String message, Throwable throwable) {
         super(message, throwable);
     }
