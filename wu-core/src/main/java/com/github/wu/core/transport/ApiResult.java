@@ -59,6 +59,6 @@ public class ApiResult {
 
     @Override
     public String toString() {
-        return "ApiResult=[value=" + value.toString() + ", code=" + code + ", throwable=" + throwable.getMessage() + "]";
+        return "ApiResult=[value=" + (value == null ? "null" : value.toString()) + ", code=" + code + ", throwable=" + (throwable == null ? "null" : throwable.getMessage()) + "]";
     }
 }
