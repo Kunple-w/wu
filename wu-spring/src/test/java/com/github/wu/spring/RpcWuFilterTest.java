@@ -1,6 +1,7 @@
 package com.github.wu.spring;
 
 import com.github.wu.common.exception.RpcException;
+import com.github.wu.core.rpc.filter.FilterScope;
 import com.github.wu.core.rpc.filter.WuFilter;
 import com.github.wu.core.transport.ApiResult;
 import com.github.wu.core.transport.Invocation;
@@ -62,8 +63,13 @@ public class RpcWuFilterTest {
         }
 
         @Override
-        public void complete(Invocation invocation, ApiResult apiResult, RpcException ex) {
+        public void complete(Invocation invocation, ApiResult apiResult, Throwable ex) {
             logger.info("complete, result: {}", apiResult);
+        }
+
+        @Override
+        public FilterScope[] scope() {
+            return new FilterScope[]{FilterScope.SERVER};
         }
     }
 }

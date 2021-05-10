@@ -7,6 +7,8 @@ import com.github.wu.common.utils.NetUtils;
 import com.github.wu.common.utils.ReflectUtils;
 import com.github.wu.core.register.DefaultProvider;
 import com.github.wu.core.register.Provider;
+import com.github.wu.core.rpc.filter.FilterChain;
+import com.github.wu.core.rpc.filter.FilterRegistry;
 import com.github.wu.core.transport.Server;
 
 import java.util.Map;
@@ -36,9 +38,12 @@ public class Exporter<T> implements Node {
 
     protected URL url;
 
-    public Exporter(Class<T> interfaceClazz, T impl) {
+    private FilterRegistry filterRegistry;
+
+    public Exporter(Class<T> interfaceClazz, T impl, FilterRegistry filterRegistry) {
         this.interfaceClazz = interfaceClazz;
         this.impl = impl;
+        this.filterRegistry = filterRegistry;
     }
 
     public void export() {
@@ -50,7 +55,8 @@ public class Exporter<T> implements Node {
     @Override
     public void init() {
         url = buildUrl(interfaceClazz);
-        DefaultProvider<T> provider = new DefaultProvider<>(url, interfaceClazz, impl);
+        FilterChain filterChain = filterRegistry.getFilterChain();
+        DefaultProvider<T> provider = new DefaultProvider<>(url, interfaceClazz, impl, filterChain);
         providerMap.put(interfaceClazz, provider);
         server.registerProvider(provider);
         available.set(true);

@@ -33,11 +33,12 @@ public class ExportConfig<T> extends AbstractRegistryHandler {
 
     private final EndPointFactory endPointFactory = new EndPointFactoryImpl();
 
-    public ExportConfig(Class<T> interfaceClazz, T impl, RegistryConfig registryConfig, ServiceConfig serviceConfig) {
+    public ExportConfig(Class<T> interfaceClazz, T impl, RegistryConfig registryConfig, ServiceConfig serviceConfig, FilterRegistry filterRegistry) {
         super(registryConfig);
         this.interfaceClazz = interfaceClazz;
         this.impl = impl;
         this.serviceConfig = serviceConfig;
+        this.filterRegistry = filterRegistry;
     }
 
     public ExportConfig(RegistryConfig registryConfig) {
@@ -45,7 +46,7 @@ public class ExportConfig<T> extends AbstractRegistryHandler {
     }
 
     protected void initExporter() {
-        exporter = new Exporter<>(interfaceClazz, impl);
+        exporter = new Exporter<>(interfaceClazz, impl, filterRegistry);
         exporter.setProtocol(serviceConfig.getProtocol());
         exporter.setPort(serviceConfig.getPort());
         exporter.setServer(getServer());

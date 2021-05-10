@@ -7,7 +7,13 @@ import com.github.wu.core.transport.*;
 import java.net.InetSocketAddress;
 
 /**
+ * 远程调用器
+ * <p>
+ * 负责发起远程调用，并获取结果
+ *
+ *
  * @author wangyongxu
+ * @see com.github.wu.core.rpc.filter.WuFilter
  */
 public class RemoteInvoker<T> implements Invoker<T> {
 

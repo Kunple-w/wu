@@ -18,7 +18,11 @@ public class FilterRegistry {
     }
 
     public List<WuFilter> getInterceptors() {
-
         return interceptors;
+    }
+
+    public FilterChain getFilterChain() {
+        WuFilter[] array = interceptors.toArray(new WuFilter[0]);
+        return new FilterChain(array);
     }
 }

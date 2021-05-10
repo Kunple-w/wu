@@ -2,6 +2,7 @@ package com.github.wu.core.register;
 
 import com.github.wu.common.URL;
 import com.github.wu.core.rpc.exception.ServiceNoSuchMethodException;
+import com.github.wu.core.rpc.filter.FilterChain;
 import com.github.wu.core.transport.ApiResult;
 import com.github.wu.core.transport.Invocation;
 
@@ -15,6 +16,8 @@ public class DefaultProvider<T> extends AbstractProvider<T> {
 
     protected final T impl;
 
+    private FilterChain filterChain;
+
     /**
      * constructor
      *
@@ -23,6 +26,12 @@ public class DefaultProvider<T> extends AbstractProvider<T> {
      * @param impl : impl class
      * @author wangyongxu
      */
+    public DefaultProvider(URL url, Class<T> cls, T impl, FilterChain filterChain) {
+        super(url, cls);
+        this.impl = impl;
+        this.filterChain = filterChain;
+    }
+
     public DefaultProvider(URL url, Class<T> cls, T impl) {
         super(url, cls);
         this.impl = impl;
@@ -39,17 +48,25 @@ public class DefaultProvider<T> extends AbstractProvider<T> {
         if (method == null) {
             return ApiResult.exception(new ServiceNoSuchMethodException(invocation.toString() + " not existed"));
         }
+
+        ApiResult result = ApiResult.empty();
         try {
-            // TODO: 2021-05-08 06:05:12 server filter使用代理生成 by wangyongxu
-            Object result = method.invoke(impl, invocation.getArgs());
-            return ApiResult.success(result);
-        } catch (InvocationTargetException e) {
-            if (e.getTargetException() != null) {
-                return ApiResult.exception(e.getTargetException());
+            boolean before = filterChain.applyBefore(invocation, result);
+            if (!before) {
+                return result;
             }
-            return ApiResult.exception(e);
+            result = call(method, impl, invocation.getArgs());
+            filterChain.applyAfter(invocation, result);
         } catch (Exception e) {
-            return ApiResult.exception(e);
+            result.setThrowable(e);
+            filterChain.applyComplete(invocation, result, e);
         }
+        return result;
     }
+
+    public ApiResult call(Method method, Object obj, Object... args) throws InvocationTargetException, IllegalAccessException {
+        Object result = method.invoke(obj, args);
+        return ApiResult.success(result);
+    }
+
 }

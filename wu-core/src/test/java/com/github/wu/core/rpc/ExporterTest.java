@@ -3,6 +3,7 @@ package com.github.wu.core.rpc;
 import com.github.wu.common.URL;
 import com.github.wu.core.UserService;
 import com.github.wu.core.UserServiceImpl;
+import com.github.wu.core.rpc.filter.FilterRegistry;
 import com.github.wu.core.transport.Client;
 import com.github.wu.core.transport.Server;
 import org.junit.jupiter.api.Test;
@@ -22,7 +23,7 @@ class ExporterTest {
         Server server = new Server(new InetSocketAddress(port));
         server.start();
         UserServiceImpl userService = new UserServiceImpl();
-        Exporter<UserService> exporter = new Exporter<>(UserService.class, userService);
+        Exporter<UserService> exporter = new Exporter<>(UserService.class, userService, new FilterRegistry());
         exporter.setProtocol("wu");
         exporter.setPort(port);
         exporter.setServer(server);

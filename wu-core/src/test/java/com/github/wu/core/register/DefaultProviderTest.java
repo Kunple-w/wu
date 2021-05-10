@@ -4,6 +4,7 @@ import com.github.wu.common.URL;
 import com.github.wu.core.UserService;
 import com.github.wu.core.UserServiceImpl;
 import com.github.wu.core.rpc.exception.ServiceNoSuchMethodException;
+import com.github.wu.core.rpc.filter.FilterRegistry;
 import com.github.wu.core.transport.ApiResult;
 import com.github.wu.core.transport.Invocation;
 import com.github.wu.core.transport.Invocations;
@@ -22,7 +23,7 @@ class DefaultProviderTest {
         String a = "http://baidu.com";
         URL url = URL.of(a);
         UserServiceImpl userService = new UserServiceImpl();
-        DefaultProvider<UserService> provider = new DefaultProvider<>(url, UserService.class, userService);
+        DefaultProvider<UserService> provider = new DefaultProvider<>(url, UserService.class, userService, new FilterRegistry().getFilterChain());
         UserService impl = provider.getImpl();
 
         Assertions.assertSame(userService, impl, "对象不一致");
@@ -33,7 +34,7 @@ class DefaultProviderTest {
         String a = "http://baidu.com";
         URL url = URL.of(a);
         UserServiceImpl userService = new UserServiceImpl();
-        DefaultProvider<UserService> provider = new DefaultProvider<>(url, UserService.class, userService);
+        DefaultProvider<UserService> provider = new DefaultProvider<>(url, UserService.class, userService, new FilterRegistry().getFilterChain());
         Object[] args = new Object[1];
         args[0] = "world";
         Invocation invocation = Invocations.parseInvocation(UserService.class, "hello", args);
@@ -46,7 +47,7 @@ class DefaultProviderTest {
         String a = "http://baidu.com";
         URL url = URL.of(a);
         UserServiceImpl userService = new UserServiceImpl();
-        DefaultProvider<UserService> provider = new DefaultProvider<>(url, UserService.class, userService);
+        DefaultProvider<UserService> provider = new DefaultProvider<>(url, UserService.class, userService, new FilterRegistry().getFilterChain());
         Object[] args = new Object[1];
         args[0] = "world";
         Invocation invocation = Invocations.parseInvocation(UserService.class, "hello2", args);
@@ -60,7 +61,7 @@ class DefaultProviderTest {
         String a = "http://baidu.com";
         URL url = URL.of(a);
         UserServiceImpl userService = new UserServiceImpl();
-        DefaultProvider<UserService> provider = new DefaultProvider<>(url, UserService.class, userService);
+        DefaultProvider<UserService> provider = new DefaultProvider<>(url, UserService.class, userService, new FilterRegistry().getFilterChain());
         Object[] args = new Object[2];
         args[0] = null;
         args[1] = "can you help me ?";

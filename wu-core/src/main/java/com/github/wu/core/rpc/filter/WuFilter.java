@@ -49,7 +49,7 @@ public interface WuFilter {
      * @param ex         : 异常，如果没有异常，则为空
      * @author wangyongxu
      */
-    default void complete(Invocation invocation, ApiResult apiResult, RpcException ex) {
+    default void complete(Invocation invocation, ApiResult apiResult, Throwable ex) {
 
     }
 

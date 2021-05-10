@@ -48,6 +48,8 @@ public class InvokerInvocationHandler implements InvocationHandler {
         }
         Invocation invocation = Invocations.parseInvocation(method, args);
         ApiResult apiResult = call(invocation, invoker);
+
+        // FIXME: 2021-05-10 05:25:04 会抛出 java.lang.reflect.UndeclaredThrowableException 异常，应该统一invoker的实现，不借助jdk的代理 by wangyongxu
         return apiResult.recreate();
     }
 

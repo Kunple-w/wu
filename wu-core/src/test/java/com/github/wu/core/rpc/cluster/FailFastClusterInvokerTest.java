@@ -6,6 +6,7 @@ import com.github.wu.core.UserServiceImpl;
 import com.github.wu.core.rpc.config.ExportConfig;
 import com.github.wu.core.rpc.config.RegistryConfig;
 import com.github.wu.core.rpc.config.ServiceConfig;
+import com.github.wu.core.rpc.filter.FilterRegistry;
 import com.github.wu.core.transport.ApiResult;
 import com.github.wu.core.transport.Invocation;
 import com.github.wu.core.transport.Invocations;
@@ -39,7 +40,7 @@ class FailFastClusterInvokerTest {
         serviceConfig.setHost("localhost");
         serviceConfig.setPort(port);
         serviceConfig.setProtocol("wu");
-        ExportConfig<UserService> exportConfig = new ExportConfig<>(UserService.class, new UserServiceImpl(), registryConfig, serviceConfig);
+        ExportConfig<UserService> exportConfig = new ExportConfig<>(UserService.class, new UserServiceImpl(), registryConfig, serviceConfig, new FilterRegistry());
         exportConfig.export();
     }
 
@@ -51,7 +52,7 @@ class FailFastClusterInvokerTest {
         serviceConfig.setHost("localhost");
         serviceConfig.setPort(port);
         serviceConfig.setProtocol("wu");
-        ExportConfig<UserService> exportConfig = new ExportConfig<>(UserService.class, new UserServiceImpl(), registryConfig, serviceConfig);
+        ExportConfig<UserService> exportConfig = new ExportConfig<>(UserService.class, new UserServiceImpl(), registryConfig, serviceConfig, new FilterRegistry());
         exportConfig.export();
     }
 

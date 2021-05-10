@@ -84,7 +84,7 @@ public class FilterChain {
      * @param ex         : 异常，如果after中没有抛出异常，则为null
      * @author wangyongxu
      */
-    public void applyComplete(Invocation invocation, ApiResult apiResult, RpcException ex) {
+    public void applyComplete(Invocation invocation, ApiResult apiResult, Throwable ex) {
         WuFilter[] filters = getFilterArray();
         if (ObjectUtils.isNotEmpty(filters)) {
             for (int i = filterIndex; i >= 0; i--) {

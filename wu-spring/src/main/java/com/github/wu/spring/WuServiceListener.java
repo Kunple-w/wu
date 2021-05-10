@@ -1,12 +1,18 @@
 package com.github.wu.spring;
 
+import com.github.wu.common.exception.RpcException;
 import com.github.wu.core.rpc.config.ExportConfig;
 import com.github.wu.core.rpc.config.RegistryConfig;
 import com.github.wu.core.rpc.config.ServiceConfig;
+import com.github.wu.core.rpc.filter.FilterChain;
 import com.github.wu.core.rpc.filter.FilterRegistry;
 import com.github.wu.core.rpc.filter.FilterScope;
 import com.github.wu.core.rpc.filter.WuFilter;
+import org.aopalliance.intercept.MethodInterceptor;
+import org.aopalliance.intercept.MethodInvocation;
+import org.springframework.aop.framework.ProxyFactoryBean;
 import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.ApplicationListener;
@@ -23,7 +29,7 @@ import java.util.stream.Collectors;
 /**
  * @author qiankewei
  */
-public class WuServiceListener implements ApplicationListener<ContextRefreshedEvent>, ApplicationContextAware {
+public class WuServiceListener implements ApplicationListener<ContextRefreshedEvent>, ApplicationContextAware, BeanPostProcessor {
 
     private WuConfigurationProperties configurationProperties;
 
@@ -41,11 +47,12 @@ public class WuServiceListener implements ApplicationListener<ContextRefreshedEv
         Class<? extends Annotation> annotationClass = WuService.class;
         Map<String, Object> beanWithAnnotation = applicationContext.getBeansWithAnnotation(annotationClass);
         Set<Map.Entry<String, Object>> entitySet = beanWithAnnotation.entrySet();
+        FilterRegistry filterRegistry = getFilterRegistry();
         for (Map.Entry<String, Object> entry : entitySet) {
             Class<?> clazz = entry.getValue().getClass();
             WuService wuService = AnnotationUtils.findAnnotation(clazz, WuService.class);
             if (wuService != null) {
-                ExportConfig<?> exportConfig = new ExportConfig(wuService.interfaceClass() == Void.class ? clazz.getInterfaces()[0] : wuService.interfaceClass(), entry.getValue(), registry, service);
+                ExportConfig<?> exportConfig = new ExportConfig(wuService.interfaceClass() == Void.class ? clazz.getInterfaces()[0] : wuService.interfaceClass(), entry.getValue(), registry, service, filterRegistry);
                 exportConfig.export();
             }
         }
@@ -65,5 +72,24 @@ public class WuServiceListener implements ApplicationListener<ContextRefreshedEv
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
         this.applicationContext = applicationContext;
+    }
+
+    protected FilterChain getFilterChain() {
+        List<WuFilter> interceptors = getFilterRegistry().getInterceptors();
+        WuFilter[] array = interceptors.toArray(new WuFilter[0]);
+        return new FilterChain(array);
+    }
+
+    @Override
+    public Object postProcessAfterInitialization(Object bean, String beanName) throws BeansException {
+        WuService annotation = AnnotationUtils.getAnnotation(bean.getClass(), WuService.class);
+        FilterRegistry filterRegistry = getFilterRegistry();
+        if (annotation != null) {
+
+
+        }
+
+        return bean;
+
     }
 }

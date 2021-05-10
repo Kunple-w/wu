@@ -21,7 +21,7 @@ public class ReferenceConfigTest {
         serviceConfig.setHost("localhost");
         serviceConfig.setPort(port);
         serviceConfig.setProtocol("wu");
-        ExportConfig<UserService> exportConfig = new ExportConfig<>(UserService.class, new UserServiceImpl(), registryConfig, serviceConfig);
+        ExportConfig<UserService> exportConfig = new ExportConfig<>(UserService.class, new UserServiceImpl(), registryConfig, serviceConfig, new FilterRegistry());
         exportConfig.export();
 
         ReferenceConfig<UserService> referenceConfig = new ReferenceConfig<>(UserService.class, registryConfig, new FilterRegistry());
