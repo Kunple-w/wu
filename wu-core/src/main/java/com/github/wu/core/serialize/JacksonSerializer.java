@@ -2,6 +2,7 @@ package com.github.wu.core.serialize;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.jsontype.impl.LaissezFaireSubTypeValidator;
 import com.github.wu.common.exception.WuRuntimeException;
 
 import java.io.IOException;
@@ -29,6 +30,9 @@ public class JacksonSerializer implements Serializer {
     }
 
     private ObjectMapper getObjectMapper() {
-        return new ObjectMapper();
+        ObjectMapper objectMapper = new ObjectMapper();
+        // fix issue#2
+        objectMapper.activateDefaultTyping(LaissezFaireSubTypeValidator.instance, ObjectMapper.DefaultTyping.NON_FINAL);
+        return objectMapper;
     }
 }
