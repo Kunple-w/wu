@@ -25,5 +25,5 @@ jobs:
         settings-path: ${{ github.workspace }} # location for the settings.xml file
 
     - name: Run the Maven verify phase
-      run: mvn --batch-mode --update-snapshots verify test
+      run: mvn test
 
