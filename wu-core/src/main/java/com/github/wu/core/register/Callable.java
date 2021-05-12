@@ -1,6 +1,5 @@
 package com.github.wu.core.register;
 
-import com.github.wu.common.Node;
 import com.github.wu.core.transport.ApiResult;
 import com.github.wu.core.transport.Invocation;
 
@@ -9,7 +8,7 @@ import com.github.wu.core.transport.Invocation;
  *
  * @author wangyongxu
  */
-public interface Callable extends Node {
+public interface Callable {
 
     ApiResult call(Invocation invocation);
 }

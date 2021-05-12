@@ -11,7 +11,6 @@ import java.net.InetSocketAddress;
  * <p>
  * 负责发起远程调用，并获取结果
  *
- *
  * @author wangyongxu
  * @see com.github.wu.core.rpc.filter.WuFilter
  */

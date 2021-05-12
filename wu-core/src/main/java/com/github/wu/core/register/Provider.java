@@ -1,6 +1,6 @@
 package com.github.wu.core.register;
 
-import com.github.wu.common.Node;
+import com.github.wu.core.rpc.Invoker;
 
 import javax.annotation.Nullable;
 import java.lang.reflect.Method;
@@ -10,16 +10,8 @@ import java.lang.reflect.Method;
  *
  * @author wangyongxu
  */
-public interface Provider<T> extends Node, Callable {
+public interface Provider<T> extends Invoker<T> {
 
-
-    /**
-     * get this provider interface
-     *
-     * @return java.lang.Class<T>
-     * @author wangyongxu
-     */
-    Class<T> getInterface();
 
     /**
      * lookup method
