@@ -56,13 +56,13 @@ public interface WuFilter {
     /**
      * 设置该filter的作用域
      * <p>
-     * 默认是BOTH
+     * 默认是CLIENT起作用
      *
      * @return com.github.wu.core.rpc.filter.FilterScope
      * @author wangyongxu
      */
     default FilterScope[] scope() {
-        return new FilterScope[]{FilterScope.CLIENT, FilterScope.SERVER};
+        return new FilterScope[]{FilterScope.CLIENT};
     }
 
 }
