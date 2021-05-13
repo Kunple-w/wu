@@ -7,13 +7,17 @@ import com.github.wu.core.transport.ApiResult;
 import com.github.wu.core.transport.Invocation;
 import com.github.wu.spring.biz.AdminService;
 import com.github.wu.spring.biz.EmailService;
-import org.apache.commons.lang3.RandomUtils;
+import org.apache.curator.test.TestingServer;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
+
+import java.io.IOException;
 
 /**
  * @author wangyongxu
@@ -22,16 +26,27 @@ import org.springframework.context.annotation.Import;
 @Import(RpcWuFilterTest.AuthFilter.class)
 public class RpcWuFilterTest {
 
-    //    @WuInject
     private EmailService emailService;
 
-    //    @WuInject
     private AdminService adminService;
 
-    //    @WuInject
+
     public void setEmailService(@WuInject EmailService emailService, @WuInject AdminService adminService) {
         this.emailService = emailService;
         this.adminService = adminService;
+    }
+
+    private static TestingServer server;
+
+    @BeforeAll
+    static void setup() throws Exception {
+        server = new TestingServer(51321, true);
+        server.start();
+    }
+
+    @AfterAll
+    static void tearDown() throws IOException {
+        server.stop();
     }
 
     @Test
@@ -49,11 +64,6 @@ public class RpcWuFilterTest {
         @Override
         public boolean before(Invocation invocation, ApiResult apiResult) throws RpcException {
             logger.info("invocation: {}", invocation);
-//            boolean b = RandomUtils.nextBoolean();
-//            if (b) {
-//                logger.info("success! ");
-//                return true;
-//            }
             throw new RpcException("user auth error");
         }
 

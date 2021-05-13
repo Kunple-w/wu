@@ -10,7 +10,7 @@ logging:
 wu:
   registry:
     host: localhost
-    port: 2181
+    port: 51321
     protocol: zookeeper
   service:
     host: localhost
