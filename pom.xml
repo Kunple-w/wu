@@ -17,6 +17,7 @@
 
     <properties>
         <wu.version>1.0-SNAPSHOT</wu.version>
+        <embedded-consul.version>2.2.1</embedded-consul.version>
         <junit-jupiter.version>RELEASE</junit-jupiter.version>
         <mockito.version>1.9.5</mockito.version>
         <netty.version>4.1.52.Final</netty.version>
@@ -33,6 +34,10 @@
         <logback.version>1.2.3</logback.version>
         <lombok.version>1.18.12</lombok.version>
         <springboot.version>2.4.0</springboot.version>
+
+        <sonar.projectKey>wangyongxu_wu</sonar.projectKey>
+        <sonar.organization>wangyongxu</sonar.organization>
+        <sonar.host.url>https://sonarcloud.io</sonar.host.url>
     </properties>
 
     <dependencyManagement>
@@ -65,7 +70,11 @@
                 <artifactId>wu-registry-consul</artifactId>
                 <version>${wu.version}</version>
             </dependency>
-
+            <dependency>
+                <groupId>com.pszymczyk.consul</groupId>
+                <artifactId>embedded-consul</artifactId>
+                <version>${embedded-consul.version}</version>
+            </dependency>
             <dependency>
                 <groupId>org.junit.jupiter</groupId>
                 <artifactId>junit-jupiter</artifactId>
