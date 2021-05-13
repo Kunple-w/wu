@@ -4,8 +4,8 @@ import com.github.wu.common.URL;
 import com.github.wu.common.URLConstant;
 import com.github.wu.common.exception.WuRuntimeException;
 import com.github.wu.common.spi.SPIAlias;
-import com.github.wu.registry.api.UrlListener;
 import com.github.wu.registry.api.RegisterService;
+import com.github.wu.registry.api.UrlListener;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.curator.framework.CuratorFramework;
 import org.apache.curator.framework.imps.CuratorFrameworkState;
@@ -78,11 +78,34 @@ public class ZookeeperRegistry implements RegisterService {
     }
 
     private String toParentPath(URL url) {
-        if (url.getPath().endsWith(PATH_SEPARATOR)) {
-            return getRoot() + url.getPath() + url.getParam(URLConstant.CATEGORY_KEY, URLConstant.PROVIDERS_CATEGORY);
-        }
-        return getRoot() + url.getPath() + PATH_SEPARATOR + url.getParam(URLConstant.CATEGORY_KEY, URLConstant.PROVIDERS_CATEGORY);
+        SeparatorSupportJoiner joiner = new SeparatorSupportJoiner();
+        joiner.join(getRoot())
+                .join(url.getPath())
+                .join(url.getParam(URLConstant.CATEGORY_KEY, URLConstant.PROVIDERS_CATEGORY));
+        return joiner.toString();
     }
+
+    private static class SeparatorSupportJoiner {
+
+        private final StringJoiner stringJoiner = new StringJoiner(PATH_SEPARATOR, PATH_SEPARATOR, "");
+
+        public SeparatorSupportJoiner join(String s) {
+            if (s.startsWith(PATH_SEPARATOR)) {
+                s = s.substring(1);
+            }
+            if (s.endsWith(PATH_SEPARATOR)) {
+                s = s.substring(0, s.length() - 1);
+            }
+            stringJoiner.add(s);
+            return this;
+        }
+
+        @Override
+        public String toString() {
+            return stringJoiner.toString();
+        }
+    }
+
 
     public String getRoot() {
         return StringUtils.isEmpty(root) ? DEFAULT_ROOT : root;
