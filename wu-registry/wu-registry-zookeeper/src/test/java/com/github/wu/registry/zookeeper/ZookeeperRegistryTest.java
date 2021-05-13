@@ -6,30 +6,46 @@ import org.apache.curator.RetryPolicy;
 import org.apache.curator.framework.CuratorFramework;
 import org.apache.curator.framework.CuratorFrameworkFactory;
 import org.apache.curator.retry.ExponentialBackoffRetry;
-import org.junit.jupiter.api.BeforeEach;
+import org.apache.curator.test.TestingServer;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Timeout;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.concurrent.CountDownLatch;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class ZookeeperRegistryTest {
 
-    public static final String connectString = "127.0.0.1:2181";
+    private static final Logger logger = LoggerFactory.getLogger(ZookeeperRegistryTest.class);
+    public static String connectString = "";
     RetryPolicy retryPolicy = new ExponentialBackoffRetry(1000, 3);
 
     CuratorFramework client = CuratorFrameworkFactory.newClient(connectString, retryPolicy);
+    private static int port = -1;
+    private static TestingServer server;
 
+    @BeforeAll
+    static void setupServer() throws Exception {
+        server = new TestingServer(-1, true);
+        server.start();
+        port = server.getPort();
+        connectString = "127.0.0.1:" + port;
+    }
 
-    @BeforeEach
-    void setup() {
-        client.start();
-        ZookeeperRegistry registry = new ZookeeperRegistry(client);
-        URL url = getUrl();
-        List<URL> lookup = registry.lookup(url);
-        if (!lookup.isEmpty()) {
-            registry.unregister(url);
-        }
+    @AfterAll
+    static void tearDownClass() throws IOException {
+        server.stop();
+    }
+
+    @AfterEach
+    void tearDown() throws Exception {
+        client.delete().deletingChildrenIfNeeded().forPath("/wu");
     }
 
     @org.junit.jupiter.api.Test
@@ -61,41 +77,50 @@ class ZookeeperRegistryTest {
     }
 
     @org.junit.jupiter.api.Test
-    void subscribe() throws IOException {
-
+    @Timeout(5)
+    void subscribe() throws InterruptedException {
+        client.start();
         ZookeeperRegistry registry = new ZookeeperRegistry(client);
         URL url = getUrl();
-        registry.register(url);
+        CountDownLatch latch = new CountDownLatch(1);
         registry.subscribe(url, new UrlListener() {
             @Override
             public void onEvent(URLChanged context) {
-                System.out.println("数据变动: " + context.getNow());
+                latch.countDown();
+                logger.info("数据变动: {}", context.getNow());
             }
         });
-        System.in.read();
+        registry.register(url);
+        latch.await();
     }
 
     @org.junit.jupiter.api.Test
-    void unsubscribe() throws IOException {
+    @Timeout(5)
+    void unsubscribe() throws InterruptedException {
+        client.start();
         ZookeeperRegistry registry = new ZookeeperRegistry(client);
         URL url = getUrl();
-        registry.register(url);
-        UrlListener URLListener = new UrlListener() {
+        CountDownLatch latch = new CountDownLatch(1);
+
+        registry.subscribe(url, new UrlListener() {
             @Override
             public void onEvent(URLChanged context) {
-                System.out.println("数据变动: " + context.getNow());
+                latch.countDown();
+                logger.info("数据变动: {}", context.getNow());
             }
-        };
-        registry.subscribe(url, URLListener);
-        registry.unsubscribe(url, URLListener);
-        System.in.read();
+        });
+        registry.register(url);
+        assertEquals(1, registry.lookup(url).size());
+        registry.unregister(url);
+        assertEquals(0, registry.lookup(url).size());
+        latch.await();
     }
 
     protected URL getUrl() {
-        URL url = URL.of(("dubbo://10.180.204.199:20880\n" +
+        return URL.of(("wu://10.180.204.199:20880\n" +
                 "/org.apache.dubbo.demo.DemoService?\n" +
                 "anyhost=true\n" +
-                "&application=dubbo-demo-api-provider\n" +
+                "&application=wu-demo-api-provider\n" +
                 "&bind.ip=10.180.204.199\n" +
                 "&bind.port=20880\n" +
                 "&default=true\n" +
@@ -103,12 +128,12 @@ class ZookeeperRegistryTest {
                 "&dubbo=2.0.2\n" +
                 "&dynamic=true\n" +
                 "&generic=false\n" +
-                "&interface=org.apache.dubbo.demo.DemoService\n" +
-                "&methods=sayHello,sayHelloAsync\n" +
+                "&interface=com.github.wu.spring.biz.AdminService\n" +
+                "&methods=admin\n" +
                 "&pid=22692\n" +
                 "&release=\n" +
                 "&side=provider\n" +
                 "&timestamp=1603277027790").replaceAll("\n", ""));
-        return url;
     }
+
 }

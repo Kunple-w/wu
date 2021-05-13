@@ -18,8 +18,10 @@
     <properties>
         <wu.version>1.0-SNAPSHOT</wu.version>
         <junit-jupiter.version>RELEASE</junit-jupiter.version>
+        <mockito.version>1.9.5</mockito.version>
         <netty.version>4.1.52.Final</netty.version>
         <zookeeper.version>3.6.2</zookeeper.version>
+        <curator.version>5.1.0</curator.version>
         <consul.version>1.4.2</consul.version>
         <java.version>1.8</java.version>
         <maven.compiler.source>1.8</maven.compiler.source>
@@ -68,9 +70,13 @@
                 <groupId>org.junit.jupiter</groupId>
                 <artifactId>junit-jupiter</artifactId>
                 <version>${junit-jupiter.version}</version>
-                <scope>test</scope>
             </dependency>
 
+            <dependency>
+                <groupId>org.mockito</groupId>
+                <artifactId>mockito-core</artifactId>
+                <version>1.9.5</version>
+            </dependency>
             <dependency>
                 <groupId>io.netty</groupId>
                 <artifactId>netty-all</artifactId> <!-- Use 'netty-all' for 4.0 or above -->
@@ -88,10 +94,19 @@
             <dependency>
                 <groupId>org.apache.curator</groupId>
                 <artifactId>curator-recipes</artifactId>
-                <version>5.1.0</version>
+                <version>${curator.version}</version>
             </dependency>
 
-
+            <dependency>
+                <groupId>org.apache.curator</groupId>
+                <artifactId>curator-test</artifactId>
+                <version>${curator.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.mockito</groupId>
+                <artifactId>mockito-core</artifactId>
+                <version>${mockito.version}</version>
+            </dependency>
             <!-- https://mvnrepository.com/artifact/com.orbitz.consul/consul-client -->
             <dependency>
                 <groupId>com.orbitz.consul</groupId>
