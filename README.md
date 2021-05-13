@@ -7,10 +7,10 @@
 ![GitHub issues](https://img.shields.io/github/issues-raw/wangyongxu/wu) 
 [![Package](https://github.com/wangyongxu/wu/actions/workflows/maven-package.yml/badge.svg?branch=master)](https://github.com/wangyongxu/wu/actions/workflows/maven-package.yml)
 [![Test](https://github.com/wangyongxu/wu/actions/workflows/maven-test.yml/badge.svg?branch=master)](https://github.com/wangyongxu/wu/actions/workflows/maven-test.yml)
-
+[![codecov](https://codecov.io/gh/wangyongxu/wu/branch/master/graph/badge.svg?token=FIRPHRBK58)](https://codecov.io/gh/wangyongxu/wu)
 
 
 
 RPC框架
 
-todo...
+todo..
