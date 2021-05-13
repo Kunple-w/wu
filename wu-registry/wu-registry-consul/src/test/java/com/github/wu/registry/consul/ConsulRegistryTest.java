@@ -7,16 +7,13 @@ import com.githuh.registry.consul.ConsulRegistry;
 import com.pszymczyk.consul.ConsulProcess;
 import com.pszymczyk.consul.ConsulStarterBuilder;
 import org.junit.Ignore;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Timeout;
+import org.junit.jupiter.api.*;
 
 import java.io.IOException;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 
-@Ignore
 class ConsulRegistryTest {
     private static ConsulProcess consul;
     private static String url = "";
@@ -24,8 +21,11 @@ class ConsulRegistryTest {
 
     @BeforeEach
     void setup() {
-        this.consul = ConsulStarterBuilder.consulStarter()
+        this.consul = ConsulStarterBuilder
+                .consulStarter()
+                .withCustomConfig("{\"enable_script_checks\":true}")
                 .build()
+
                 .start();
         int port = consul.getHttpPort();
         url = "http://localhost:" + port;
@@ -45,21 +45,23 @@ class ConsulRegistryTest {
 
     @org.junit.jupiter.api.Test
     void unregister() {
-
         ConsulRegistry consulRegistry = new ConsulRegistry(url);
         consulRegistry.unregister(getUrl());
     }
 
     @org.junit.jupiter.api.Test
-    void lookUp() {
+    void lookUp() throws InterruptedException {
         ConsulRegistry consulRegistry = new ConsulRegistry(url);
         consulRegistry.register(getUrl());
+        TimeUnit.SECONDS.sleep(2);
         List<URL> urls = consulRegistry.lookup(getUrl());
         Assertions.assertEquals(1, urls.size());
     }
 
-    @org.junit.jupiter.api.Test
+    @org.junit.jupiter.api.Test()
     @Timeout(30)
+    @Disabled
+
     void subscribe() throws Exception {
         ConsulRegistry consulRegistry = new ConsulRegistry(url);
         CountDownLatch latch = new CountDownLatch(1);

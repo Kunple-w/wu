@@ -2,22 +2,29 @@ package com.githuh.registry.consul;
 
 import com.github.wu.common.URL;
 import com.github.wu.common.URLConstant;
-import com.github.wu.registry.api.UrlListener;
 import com.github.wu.registry.api.RegisterService;
+import com.github.wu.registry.api.UrlListener;
 import com.orbitz.consul.AgentClient;
 import com.orbitz.consul.Consul;
 import com.orbitz.consul.HealthClient;
+import com.orbitz.consul.NotRegisteredException;
 import com.orbitz.consul.cache.ConsulCache;
 import com.orbitz.consul.cache.ServiceHealthCache;
 import com.orbitz.consul.cache.ServiceHealthKey;
+import com.orbitz.consul.model.State;
 import com.orbitz.consul.model.agent.ImmutableRegistration;
 import com.orbitz.consul.model.agent.Registration;
 import com.orbitz.consul.model.health.Service;
 import com.orbitz.consul.model.health.ServiceHealth;
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 /**
@@ -25,13 +32,19 @@ import java.util.stream.Collectors;
  */
 public class ConsulRegistry implements RegisterService {
 
+    private static final Logger logger = LoggerFactory.getLogger(ConsulRegistry.class);
     static final long DEFAULT_CHECK_PASS_INTERVAL = 16L;
     public static final String URL_META_KEY = "url";
 
     private Consul consul;
 
     private Map<URL, ServiceHealthCache> cacheMap = new ConcurrentHashMap<>();
+    private Set<URL> urlSet = new HashSet<>();
+
     private Map<ServiceHealthCache, List<Map<UrlListener, ConsulCache.Listener<ServiceHealthKey, ServiceHealth>>>> listenerMap = new ConcurrentHashMap<>();
+    private ScheduledExecutorService ttlCheckThreadPool = Executors.newScheduledThreadPool(2);
+    // TODO: 2021-05-13 06:11:51 线程池优化 by wangyongxu
+
 
     public ConsulRegistry(String url) {
         if (StringUtils.isNotBlank(url)) {
@@ -39,6 +52,7 @@ public class ConsulRegistry implements RegisterService {
         } else {
             this.consul = Consul.builder().build();
         }
+        ttlCheckThreadPool.scheduleAtFixedRate(this::heartbeat, 0, 100, TimeUnit.MILLISECONDS);
     }
 
     public ConsulRegistry() {
@@ -51,19 +65,43 @@ public class ConsulRegistry implements RegisterService {
             throw new IllegalArgumentException("url can not be null!");
         }
         AgentClient agentClient = consul.agentClient();
-        String serviceId = bulidId(url);
+        String serviceId = buildId(url);
         if (agentClient.isRegistered(serviceId)) {
             return;
         }
         Registration registration = buildRegistration(url, serviceId);
+//        agentClient.registerCheck("ssh", "SSH TCP on 22", "localhost:22", 10, "wu health check");
+//        agentClient.register
         agentClient.register(registration);
+        urlSet.add(url);
+
+    }
+
+    private void heartbeat() {
+        AgentClient client = consul.agentClient();
+
+        for (URL url : urlSet) {
+            try {
+                client.check("service:" + buildId(url), State.PASS, "i'm ok");
+            } catch (NotRegisteredException e) {
+                logger.error("service not register: {}", url);
+            }
+        }
     }
 
     private ImmutableRegistration buildRegistration(URL url, String serviceId) {
         String serviceName = getServiceName(url);
-        Integer port = url.getPort();
+        int port = url.getPort();
         String address = url.getHost();
-        return ImmutableRegistration.builder().name(serviceName).port(port).address(address).id(serviceId).check(buildRegCheck(url)).tags(buildTags(url)).meta(buildMeta(url)).build();
+        return ImmutableRegistration.builder()
+                .name(serviceName)
+                .port(port)
+                .address(address)
+                .id(serviceId)
+                .check(buildRegCheck(url))
+                .tags(buildTags(url))
+                .meta(buildMeta(url))
+                .build();
     }
 
     private Map<String, String> buildMeta(URL url) {
@@ -74,14 +112,15 @@ public class ConsulRegistry implements RegisterService {
         return url.getParam(URLConstant.APPLICATION_KEY);
     }
 
-    private String bulidId(URL url) {
+    private String buildId(URL url) {
         return Integer.toHexString(url.hashCode());
     }
 
     private List<String> buildTags(URL url) {
         Map<String, String> params = url.getParameters();
-        List<String> tags = params.entrySet().stream().map(k -> k.getKey() + "=" + k.getValue()).collect(Collectors.toList());
-        return tags;
+        return params.entrySet().stream()
+                .map(k -> k.getKey() + "=" + k.getValue())
+                .collect(Collectors.toList());
     }
 
     private Registration.RegCheck buildRegCheck(URL url) {
@@ -90,8 +129,7 @@ public class ConsulRegistry implements RegisterService {
         if (!StringUtils.isEmpty(checkPassInterval)) {
             ttl = Long.parseLong(checkPassInterval);
         }
-        Registration.RegCheck regCheck = Registration.RegCheck.ttl(ttl);
-        return regCheck;
+        return Registration.RegCheck.ttl(ttl);
     }
 
     @Override
@@ -100,8 +138,9 @@ public class ConsulRegistry implements RegisterService {
             throw new IllegalArgumentException("url can not be null!");
         }
         AgentClient agentClient = consul.agentClient();
-        String serviceId = bulidId(url);
+        String serviceId = buildId(url);
         agentClient.deregister(serviceId);
+        urlSet.remove(url);
     }
 
     @Override
@@ -111,15 +150,22 @@ public class ConsulRegistry implements RegisterService {
         }
         String serviceName = getServiceName(url);
         List<ServiceHealth> serviceHealthy = findServiceHealthy(serviceName);
-        if (serviceHealthy == null || serviceHealthy.size() == 0) {
-            return new ArrayList<>();
+        if (serviceHealthy == null || serviceHealthy.isEmpty()) {
+            return Collections.emptyList();
         } else {
             return convert(serviceHealthy);
         }
     }
 
     private List<URL> convert(List<ServiceHealth> serviceHealthy) {
-        return serviceHealthy.stream().map(ServiceHealth::getService).filter(Objects::nonNull).map(Service::getMeta).filter(m -> m != null && m.containsKey(URL_META_KEY)).map(m -> m.get(URL_META_KEY)).map(URL::of).collect(Collectors.toList());
+        return serviceHealthy.stream()
+                .map(ServiceHealth::getService)
+                .filter(Objects::nonNull)
+                .map(Service::getMeta)
+                .filter(m -> m != null && m.containsKey(URL_META_KEY))
+                .map(m -> m.get(URL_META_KEY))
+                .map(URL::of)
+                .collect(Collectors.toList());
     }
 
     private List<ServiceHealth> findServiceHealthy(String serviceName) {
@@ -138,9 +184,8 @@ public class ConsulRegistry implements RegisterService {
 
         ServiceHealthCache finalServiceHealthCache = serviceHealthCache;
         ConsulCache.Listener<ServiceHealthKey, ServiceHealth> listener = newValues -> {
-            List<ServiceHealth> serviceHealths = newValues.entrySet().stream().filter(entry -> entry.getKey().getServiceId().equals(bulidId(url))).map(Map.Entry::getValue).collect(Collectors.toList());
-            if (serviceHealths.size() > 0) {
-
+            List<ServiceHealth> serviceHealths = newValues.entrySet().stream().filter(entry -> entry.getKey().getServiceId().equals(buildId(url))).map(Map.Entry::getValue).collect(Collectors.toList());
+            if (!serviceHealths.isEmpty()) {
                 List<URL> urls = convert(serviceHealths);
                 UrlListener.URLChanged urlChanged = new UrlListener.URLChanged(new HashSet<>(urls));
                 urlListener.onEvent(urlChanged);
