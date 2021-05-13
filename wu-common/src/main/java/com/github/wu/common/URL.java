@@ -115,6 +115,14 @@ public class URL {
         }
     }
 
+    public String getPath() {
+        if (path.startsWith("/")) {
+            return path;
+        } else {
+            return "/" + path;
+        }
+    }
+
     private static Map<String, String> parseParams(String paramString) {
         Map<String, String> params = new HashMap<>();
         if (StringUtils.isEmpty(paramString)) {
@@ -154,7 +162,7 @@ public class URL {
     }
 
     public String getURLPath() {
-        return protocol + "://" + host + ":" + port + path;
+        return protocol + "://" + host + ":" + port + getPath();
     }
 
     public String getUri() {
