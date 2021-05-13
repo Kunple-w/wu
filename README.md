@@ -8,7 +8,8 @@
 [![Package](https://github.com/wangyongxu/wu/actions/workflows/maven-package.yml/badge.svg?branch=master)](https://github.com/wangyongxu/wu/actions/workflows/maven-package.yml)
 [![Test](https://github.com/wangyongxu/wu/actions/workflows/maven-test.yml/badge.svg?branch=master)](https://github.com/wangyongxu/wu/actions/workflows/maven-test.yml)
 [![codecov](https://codecov.io/gh/wangyongxu/wu/branch/master/graph/badge.svg?token=FIRPHRBK58)](https://codecov.io/gh/wangyongxu/wu)
-
+![score](https://www.code-inspector.com/project/22595/score/svg)
+![status](https://www.code-inspector.com/project/22595/status/svg)
 
 
 RPC框架
