@@ -21,6 +21,11 @@
             <artifactId>consul-client</artifactId>
         </dependency>
         <dependency>
+            <groupId>com.pszymczyk.consul</groupId>
+            <artifactId>embedded-consul</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
             <groupId>com.github</groupId>
             <artifactId>wu-common</artifactId>
         </dependency>

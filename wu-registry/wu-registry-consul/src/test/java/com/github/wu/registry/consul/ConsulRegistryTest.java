@@ -4,48 +4,80 @@ package com.github.wu.registry.consul;
 import com.github.wu.common.URL;
 import com.github.wu.registry.api.UrlListener;
 import com.githuh.registry.consul.ConsulRegistry;
+import com.pszymczyk.consul.ConsulProcess;
+import com.pszymczyk.consul.ConsulStarterBuilder;
+import org.junit.Ignore;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Timeout;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.concurrent.CountDownLatch;
 
+@Ignore
 class ConsulRegistryTest {
+    private static ConsulProcess consul;
+    private static String url = "";
+
+
+    @BeforeEach
+    void setup() {
+        this.consul = ConsulStarterBuilder.consulStarter()
+                .build()
+                .start();
+        int port = consul.getHttpPort();
+        url = "http://localhost:" + port;
+    }
+
+    @AfterEach
+    void tearDown() {
+        consul.close();
+    }
+
 
     @org.junit.jupiter.api.Test
     void register() {
-        ConsulRegistry consulRegistry = new ConsulRegistry();
+        ConsulRegistry consulRegistry = new ConsulRegistry(url);
         consulRegistry.register(getUrl());
     }
 
     @org.junit.jupiter.api.Test
     void unregister() {
-        ConsulRegistry consulRegistry = new ConsulRegistry();
+
+        ConsulRegistry consulRegistry = new ConsulRegistry(url);
         consulRegistry.unregister(getUrl());
     }
 
     @org.junit.jupiter.api.Test
     void lookUp() {
-        ConsulRegistry consulRegistry = new ConsulRegistry();
+        ConsulRegistry consulRegistry = new ConsulRegistry(url);
+        consulRegistry.register(getUrl());
         List<URL> urls = consulRegistry.lookup(getUrl());
-        assert urls.size() > 0;
+        Assertions.assertEquals(1, urls.size());
     }
 
     @org.junit.jupiter.api.Test
+    @Timeout(30)
     void subscribe() throws Exception {
-        ConsulRegistry consulRegistry = new ConsulRegistry();
-        UrlListener URLListener = new UrlListener() {
+        ConsulRegistry consulRegistry = new ConsulRegistry(url);
+        CountDownLatch latch = new CountDownLatch(1);
+        consulRegistry.subscribe(getUrl(), new UrlListener() {
             @Override
             public void onEvent(URLChanged context) {
+                latch.countDown();
                 System.out.println("数据变动: " + context.getNow());
             }
-        };
-        consulRegistry.subscribe(getUrl(), URLListener);
-        System.in.read();
+        });
+        consulRegistry.unregister(getUrl());
+        latch.await();
     }
 
 
     @org.junit.jupiter.api.Test
     void unsubscribe() throws IOException {
-        ConsulRegistry consulRegistry = new ConsulRegistry();
+        ConsulRegistry consulRegistry = new ConsulRegistry(url);
         UrlListener URLListener = new UrlListener() {
             @Override
             public void onEvent(URLChanged context) {
@@ -54,9 +86,7 @@ class ConsulRegistryTest {
         };
         consulRegistry.subscribe(getUrl(), URLListener);
         consulRegistry.unsubscribe(getUrl(), URLListener);
-        System.in.read();
     }
-
 
 
     protected URL getUrl() {
