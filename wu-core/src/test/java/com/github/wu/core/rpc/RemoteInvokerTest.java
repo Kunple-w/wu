@@ -16,6 +16,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.net.InetSocketAddress;
+import java.util.concurrent.TimeUnit;
 
 class RemoteInvokerTest {
     private static final Logger logger = LoggerFactory.getLogger(RemoteInvokerTest.class);
@@ -26,7 +27,8 @@ class RemoteInvokerTest {
     private Exporter<UserService> exporter;
 
     @Test
-    void call() {
+    void call() throws InterruptedException {
+        TimeUnit.SECONDS.sleep(2);
         Object[] args = new Object[1];
         args[0] = "world2";
         Invocation invocation = Invocations.parseInvocation(UserService.class, "hello", args);
