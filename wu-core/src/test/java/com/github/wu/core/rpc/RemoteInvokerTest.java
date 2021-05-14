@@ -9,6 +9,7 @@ import com.github.wu.core.transport.Invocation;
 import com.github.wu.core.transport.Invocations;
 import com.github.wu.core.transport.Server;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
@@ -20,9 +21,12 @@ class RemoteInvokerTest {
     private static final Logger logger = LoggerFactory.getLogger(RemoteInvokerTest.class);
     private int port = 18100;
 
+    private Server server;
+    private Exporter<UserService> exporter;
+
     @Test
     void call() {
-        String a = "wu://localhost:18100/com.github.wu.core.UserService?methods=hello,search,hi,hi";
+        String a = "wu://127.0.0.1:18100/com.github.wu.core.UserService?methods=hello,search,hi,hi";
         URL url = URL.of(a);
         Object[] args = new Object[1];
         args[0] = "world2";
@@ -31,14 +35,16 @@ class RemoteInvokerTest {
         invoker.init();
         ApiResult apiResult = invoker.call(invocation);
         logger.info("apiResult: {}", apiResult);
+        invoker.destroy();
+        Assertions.assertEquals("hello world2", apiResult.getValue());
     }
 
     @BeforeEach
     void export() throws InterruptedException {
-        Server server = new Server(new InetSocketAddress(port));
+        server = new Server(new InetSocketAddress(port));
         server.start();
         UserServiceImpl userService = new UserServiceImpl();
-        Exporter<UserService> exporter = new Exporter<>(UserService.class, userService, new FilterRegistry());
+        exporter = new Exporter<>(UserService.class, userService, new FilterRegistry());
         exporter.setProtocol("wu");
         exporter.setPort(port);
         exporter.setServer(server);
@@ -50,6 +56,7 @@ class RemoteInvokerTest {
 
     @AfterEach
     void tearDown() {
-
+        exporter.destroy();
+        server.stop();
     }
 }
