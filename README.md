@@ -10,7 +10,7 @@
 [![codecov](https://codecov.io/gh/wangyongxu/wu/branch/master/graph/badge.svg?token=FIRPHRBK58)](https://codecov.io/gh/wangyongxu/wu)
 ![score](https://www.code-inspector.com/project/22595/score/svg)
 ![status](https://www.code-inspector.com/project/22595/status/svg)
-
+[![SonarCloud Bugs](https://sonarcloud.io/api/project_badges/measure?project=wangyongxu_wu&metric=bugs)](https://sonarcloud.io/component_measures/metric/reliability_rating/list?id=wangyongxu_wu)
 
 RPC框架
 
