@@ -84,7 +84,7 @@
             <dependency>
                 <groupId>org.mockito</groupId>
                 <artifactId>mockito-core</artifactId>
-                <version>1.9.5</version>
+                <version>${mockito.version}</version>
             </dependency>
             <dependency>
                 <groupId>io.netty</groupId>
@@ -111,11 +111,7 @@
                 <artifactId>curator-test</artifactId>
                 <version>${curator.version}</version>
             </dependency>
-            <dependency>
-                <groupId>org.mockito</groupId>
-                <artifactId>mockito-core</artifactId>
-                <version>${mockito.version}</version>
-            </dependency>
+
             <!-- https://mvnrepository.com/artifact/com.orbitz.consul/consul-client -->
             <dependency>
                 <groupId>com.orbitz.consul</groupId>
