@@ -9,9 +9,9 @@ import lombok.Data;
 @Data
 public class ApiResult {
 
-    private static final int SUCCESS = 0;
-    private static final int FAILED = -1;
-    private static final int EMPTY = -2;
+    public static final int SUCCESS = 0;
+    public static final int FAILED = -1;
+    public static final int EMPTY = -2;
 
     private Object value;
 
@@ -50,6 +50,12 @@ public class ApiResult {
         } else {
             throw throwable;
         }
+    }
+
+    public ApiResult resetException(Throwable throwable) {
+        this.code = FAILED;
+        this.throwable = throwable;
+        return this;
     }
 
     @JsonIgnore

@@ -32,7 +32,9 @@ public class ServerHandler extends ChannelDuplexHandler {
 
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
-        logger.info("收到消息: {}", msg);
+        if (logger.isDebugEnabled()) {
+            logger.debug("receive msg: {}, channel: {}", msg, ctx.channel());
+        }
         if (msg instanceof Request) {
             Request request = (Request) msg;
             ApiResult body = handleRequest(request);
@@ -50,13 +52,19 @@ public class ServerHandler extends ChannelDuplexHandler {
         if (provider == null) {
             throw new ServiceNotRegisterException(serviceName + " not existed");
         }
-        logger.info("provider find: {}", provider);
+        logger.debug("provider find: {}", provider);
         ApiResult apiResult = provider.call(request.getBody());
-        logger.info("provider call result: {}", apiResult);
+        logger.debug("provider call result: {}", apiResult);
         return apiResult;
     }
 
     private Provider<?> getService(String serviceName) {
         return map.get(serviceName);
+    }
+
+    @Override
+    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
+        logger.error("exception caught, will close channel: {}", ctx.channel(), cause);
+        ctx.channel().close();
     }
 }

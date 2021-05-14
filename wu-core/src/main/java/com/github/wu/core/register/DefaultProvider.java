@@ -33,8 +33,7 @@ public class DefaultProvider<T> extends AbstractProvider<T> {
     }
 
     public DefaultProvider(URL url, Class<T> cls, T impl) {
-        super(url, cls);
-        this.impl = impl;
+        this(url, cls, impl, FilterChain.EMPTY);
     }
 
     @Override
@@ -57,8 +56,11 @@ public class DefaultProvider<T> extends AbstractProvider<T> {
             }
             result = call(method, impl, invocation.getArgs());
             filterChain.applyAfter(invocation, result);
+        } catch (InvocationTargetException e) {
+            result.resetException(e.getTargetException());
+            filterChain.applyComplete(invocation, result, e.getTargetException());
         } catch (Exception e) {
-            result.setThrowable(e);
+            result.resetException(e);
             filterChain.applyComplete(invocation, result, e);
         }
         return result;

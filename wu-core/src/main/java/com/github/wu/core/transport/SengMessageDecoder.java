@@ -1,7 +1,7 @@
 package com.github.wu.core.transport;
 
-import com.github.wu.common.exception.WuRuntimeException;
 import com.github.wu.common.exception.UnsupportedProtocolException;
+import com.github.wu.common.exception.WuRuntimeException;
 import com.github.wu.common.utils.ReflectUtils;
 import com.github.wu.core.serialize.Serializer;
 import com.github.wu.core.serialize.SerializerFactory;
@@ -53,8 +53,10 @@ public class SengMessageDecoder extends ByteToMessageDecoder {
         header.setReqId(byteBuf.readLong());
         int bodyLength = byteBuf.readInt();
         header.setDataLength(bodyLength);
+        // 额外申请memory
         byte[] body = new byte[bodyLength];
-        byteBuf.getBytes(byteBuf.readerIndex(), body, 0, bodyLength);
+        // fix issue#5
+        byteBuf.readBytes(body, 0, bodyLength);
 
         Serializer serializer = SerializerFactory.getSerializer(header.getSerializerId());
         if (SengProtocolHeader.REQUEST == header.getMsgType()) {
@@ -105,7 +107,7 @@ public class SengMessageDecoder extends ByteToMessageDecoder {
         ByteArrayInputStream inputStream = new ByteArrayInputStream(body);
         ObjectInput input = createInput(inputStream);
         String bodyClassName = input.readUTF();
-        byte[] bodyBytes = (byte[])input.readObject();
+        byte[] bodyBytes = (byte[]) input.readObject();
         Class<?> aClass = ReflectUtils.getClass(bodyClassName);
         return serializer.deserialize(bodyBytes, aClass);
     }

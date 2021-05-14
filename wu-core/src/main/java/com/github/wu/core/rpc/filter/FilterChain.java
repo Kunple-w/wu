@@ -15,7 +15,9 @@ import org.slf4j.LoggerFactory;
 public class FilterChain {
     private static final Logger logger = LoggerFactory.getLogger(FilterChain.class);
 
-    private WuFilter[] filterArray = new WuFilter[3];
+    public static final FilterChain EMPTY = new FilterChain();
+
+    private WuFilter[] filterArray;
 
     /**
      * 执行到当前filter的索引
@@ -24,6 +26,10 @@ public class FilterChain {
 
     public FilterChain(WuFilter[] filterArray) {
         this.filterArray = filterArray;
+    }
+
+    public FilterChain() {
+        this(new WuFilter[0]);
     }
 
     private WuFilter[] getFilterArray() {

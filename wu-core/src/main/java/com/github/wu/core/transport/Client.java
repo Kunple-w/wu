@@ -75,7 +75,7 @@ public class Client {
             ChannelFuture channelFuture = bootstrap.connect(inetSocketAddress.getHostString(), inetSocketAddress.getPort());
             channel = channelFuture.sync().channel();
         } catch (InterruptedException e) {
-            throw new WuRuntimeException("start client falied.", e);
+            throw new WuRuntimeException("start client failed.", e);
         } catch (Throwable t) {
             throw new WuRuntimeException("unknown error", t);
         }
