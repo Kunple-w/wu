@@ -31,7 +31,7 @@ public class RpcAnnotationTest {
 
     @AfterAll
     static void tearDown() throws IOException {
-        server.stop();
+        server.close();
     }
 
     //    @WuInject

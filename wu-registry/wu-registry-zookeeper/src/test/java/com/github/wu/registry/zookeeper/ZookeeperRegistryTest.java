@@ -7,14 +7,12 @@ import org.apache.curator.framework.CuratorFramework;
 import org.apache.curator.framework.CuratorFrameworkFactory;
 import org.apache.curator.retry.ExponentialBackoffRetry;
 import org.apache.curator.test.TestingServer;
-import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Timeout;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
 
@@ -26,26 +24,22 @@ class ZookeeperRegistryTest {
     public static String connectString = "";
     RetryPolicy retryPolicy = new ExponentialBackoffRetry(1000, 3);
 
-    CuratorFramework client = CuratorFrameworkFactory.newClient(connectString, retryPolicy);
-    private static int port = -1;
+    CuratorFramework client;
+    private int port = -1;
     private static TestingServer server;
 
-    @BeforeAll
-    static void setupServer() throws Exception {
+    @BeforeEach
+    void setupServer() throws Exception {
         server = new TestingServer(-1, true);
         server.start();
         port = server.getPort();
         connectString = "127.0.0.1:" + port;
-    }
-
-    @AfterAll
-    static void tearDownClass() throws IOException {
-        server.stop();
+        client = CuratorFrameworkFactory.newClient(connectString, retryPolicy);
     }
 
     @AfterEach
     void tearDown() throws Exception {
-        client.delete().deletingChildrenIfNeeded().forPath("/wu");
+        server.stop();
     }
 
     @org.junit.jupiter.api.Test
