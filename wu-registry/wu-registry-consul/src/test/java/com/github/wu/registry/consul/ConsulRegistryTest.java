@@ -6,7 +6,6 @@ import com.github.wu.registry.api.UrlListener;
 import com.githuh.registry.consul.ConsulRegistry;
 import com.pszymczyk.consul.ConsulProcess;
 import com.pszymczyk.consul.ConsulStarterBuilder;
-import org.junit.Ignore;
 import org.junit.jupiter.api.*;
 
 import java.io.IOException;
@@ -61,7 +60,6 @@ class ConsulRegistryTest {
     @org.junit.jupiter.api.Test()
     @Timeout(30)
     @Disabled
-
     void subscribe() throws Exception {
         ConsulRegistry consulRegistry = new ConsulRegistry(url);
         CountDownLatch latch = new CountDownLatch(1);

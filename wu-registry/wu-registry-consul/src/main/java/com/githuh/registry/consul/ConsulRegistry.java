@@ -84,7 +84,7 @@ public class ConsulRegistry implements RegisterService {
             try {
                 client.check("service:" + buildId(url), State.PASS, "i'm ok");
             } catch (NotRegisteredException e) {
-                logger.error("service not register: {}", url);
+                logger.warn("service not register: {}", url);
             }
         }
     }
