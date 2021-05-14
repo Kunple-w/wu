@@ -40,13 +40,13 @@ public class RpcWuFilterTest {
 
     @BeforeAll
     static void setup() throws Exception {
-        server = new TestingServer(51321, true);
+        server = new TestingServer(52321, true);
         server.start();
     }
 
     @AfterAll
     static void tearDown() throws IOException {
-        server.close();
+//        server.close();
     }
 
     @Test
