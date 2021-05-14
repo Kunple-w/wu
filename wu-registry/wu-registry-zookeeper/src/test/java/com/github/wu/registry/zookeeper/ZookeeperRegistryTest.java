@@ -43,6 +43,7 @@ class ZookeeperRegistryTest {
     }
 
     @org.junit.jupiter.api.Test
+    @Timeout(30)
     void register() {
         client.start();
         ZookeeperRegistry registry = new ZookeeperRegistry(client);
@@ -52,6 +53,7 @@ class ZookeeperRegistryTest {
 
 
     @org.junit.jupiter.api.Test
+    @Timeout(30)
     void unregister() {
         client.start();
         ZookeeperRegistry registry = new ZookeeperRegistry(client);
@@ -61,6 +63,7 @@ class ZookeeperRegistryTest {
     }
 
     @org.junit.jupiter.api.Test
+    @Timeout(30)
     void lookup() {
         client.start();
         ZookeeperRegistry registry = new ZookeeperRegistry(client);
@@ -71,7 +74,7 @@ class ZookeeperRegistryTest {
     }
 
     @org.junit.jupiter.api.Test
-    @Timeout(5)
+    @Timeout(30)
     void subscribe() throws InterruptedException {
         client.start();
         ZookeeperRegistry registry = new ZookeeperRegistry(client);
@@ -89,7 +92,7 @@ class ZookeeperRegistryTest {
     }
 
     @org.junit.jupiter.api.Test
-    @Timeout(5)
+    @Timeout(30)
     void unsubscribe() throws InterruptedException {
         client.start();
         ZookeeperRegistry registry = new ZookeeperRegistry(client);
