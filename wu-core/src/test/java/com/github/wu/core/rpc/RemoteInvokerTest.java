@@ -22,12 +22,11 @@ class RemoteInvokerTest {
     private int port = 18100;
 
     private Server server;
+    private URL url;
     private Exporter<UserService> exporter;
 
     @Test
     void call() {
-        String a = "wu://127.0.0.1:18100/com.github.wu.core.UserService?methods=hello,search,hi,hi";
-        URL url = URL.of(a);
         Object[] args = new Object[1];
         args[0] = "world2";
         Invocation invocation = Invocations.parseInvocation(UserService.class, "hello", args);
@@ -50,7 +49,7 @@ class RemoteInvokerTest {
         exporter.setServer(server);
 
         exporter.export();
-        URL url = exporter.getURL();
+        url = exporter.getURL();
         logger.info("url: {}", url.getFullURL());
     }
 
