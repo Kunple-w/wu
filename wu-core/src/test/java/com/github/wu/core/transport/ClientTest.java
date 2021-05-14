@@ -1,7 +1,7 @@
 package com.github.wu.core.transport;
 
-import com.github.wu.core.UserService;
-import com.github.wu.core.rpc.Reference;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,32 +12,32 @@ import java.util.concurrent.TimeUnit;
 class ClientTest {
     private static final Logger logger = LoggerFactory.getLogger(ClientTest.class);
 
-    @Test
-    void start() throws InterruptedException {
-        Client client = new Client(new InetSocketAddress(13232));
-        client.start();
-        TimeUnit.SECONDS.sleep(2);
-        logger.info("channel: {}", client.getChannel());
+    private Server server;
+    private Client client;
+    private int serverPort = 13232;
 
-
-        for (int i = 0; i < 2; i++) {
-            SengMessage sengMessage = new SengMessage();
-            sengMessage.setHeader(new SengProtocolHeader());
-            sengMessage.setBody(new byte[0]);
-//            client.send(sengMessage);
-        }
-        TimeUnit.HOURS.sleep(100);
-    }
 
     @Test
     void remote() throws InterruptedException {
-        Client client = new Client(new InetSocketAddress(13232));
+        client = new Client(new InetSocketAddress(serverPort));
         client.start();
         TimeUnit.SECONDS.sleep(2);
-
-        Reference<UserService> reference = new Reference<>(client, UserService.class);
-        UserService refer = reference.refer();
-        String hello = refer.hello("remote, ");
-        logger.info("result: {}", hello);
     }
+
+    @BeforeEach
+    void startServer() throws InterruptedException {
+        logger.info("server start");
+        server = new Server(new InetSocketAddress(serverPort));
+        server.start();
+        TimeUnit.SECONDS.sleep(2);
+
+    }
+
+    @AfterEach
+    void tearDown() {
+        client.disConnect();
+        server.stop();
+    }
+
+
 }

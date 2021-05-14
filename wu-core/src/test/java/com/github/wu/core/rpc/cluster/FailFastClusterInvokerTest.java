@@ -10,13 +10,32 @@ import com.github.wu.core.rpc.filter.FilterRegistry;
 import com.github.wu.core.transport.ApiResult;
 import com.github.wu.core.transport.Invocation;
 import com.github.wu.core.transport.Invocations;
+import org.apache.curator.test.TestingServer;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
+
 class FailFastClusterInvokerTest {
     private static final Logger logger = LoggerFactory.getLogger(FailFastClusterInvokerTest.class);
+    private static TestingServer server;
+    private static int zkPort = -1;
+
+    @BeforeEach
+    void setup() throws Exception {
+        server = new TestingServer(true);
+        server.start();
+        zkPort = server.getPort();
+    }
+
+    @AfterEach
+    void tearDown() throws IOException {
+        server.close();
+    }
 
     @Test
     void call() {
@@ -24,18 +43,18 @@ class FailFastClusterInvokerTest {
         args[0] = "world";
         Invocation invocation = Invocations.parseInvocation(UserService.class, "hello", args);
 
-        URL registryUrl = URL.of("zookeeper://127.0.0.1:2181");
+        URL registryUrl = URL.of("zookeeper://127.0.0.1:" + zkPort);
         FailFastClusterInvoker<UserService> failFastClusterInvoker = new FailFastClusterInvoker<>(registryUrl, UserService.class);
         failFastClusterInvoker.init();
         ApiResult apiResult = failFastClusterInvoker.call(invocation);
-        logger.info("result: {}", apiResult);
+        Assertions.assertEquals("hello world", apiResult.getValue());
     }
 
 
     @BeforeEach
     void exportService1() {
         int port = 20000;
-        RegistryConfig registryConfig = new RegistryConfig("zookeeper://localhost:2181");
+        RegistryConfig registryConfig = new RegistryConfig("zookeeper://localhost:" + zkPort);
         ServiceConfig serviceConfig = new ServiceConfig();
         serviceConfig.setHost("localhost");
         serviceConfig.setPort(port);
@@ -47,7 +66,7 @@ class FailFastClusterInvokerTest {
     @BeforeEach
     void exportService2() {
         int port = 20001;
-        RegistryConfig registryConfig = new RegistryConfig("zookeeper://localhost:2181");
+        RegistryConfig registryConfig = new RegistryConfig("zookeeper://localhost:" + zkPort);
         ServiceConfig serviceConfig = new ServiceConfig();
         serviceConfig.setHost("localhost");
         serviceConfig.setPort(port);

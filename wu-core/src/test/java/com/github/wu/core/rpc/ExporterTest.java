@@ -6,6 +6,7 @@ import com.github.wu.core.UserServiceImpl;
 import com.github.wu.core.rpc.filter.FilterRegistry;
 import com.github.wu.core.transport.Client;
 import com.github.wu.core.transport.Server;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,7 +19,6 @@ class ExporterTest {
 
     private int port = 18000;
 
-    @Test
     void export() throws InterruptedException {
         Server server = new Server(new InetSocketAddress(port));
         server.start();
@@ -31,19 +31,21 @@ class ExporterTest {
         exporter.export();
         URL url = exporter.getURL();
         logger.info("url: {}", url.getFullURL());
-        TimeUnit.HOURS.sleep(100);
     }
 
     @Test
     void reference() throws Exception {
+
+        export();
+
         Client client = new Client(new InetSocketAddress(port));
         client.start();
         TimeUnit.SECONDS.sleep(2);
-
         Reference<UserService> reference = new Reference<>(client, UserService.class);
         UserService refer = reference.refer();
         String hello = refer.hello("wu!");
         logger.info("result: {}", hello);
+        Assertions.assertEquals("hello wu!", hello);
     }
 
     @Test

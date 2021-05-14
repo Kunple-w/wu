@@ -13,6 +13,8 @@ import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.handler.logging.LogLevel;
 import io.netty.handler.logging.LoggingHandler;
 import io.netty.handler.timeout.IdleStateHandler;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.net.InetSocketAddress;
 import java.util.concurrent.TimeUnit;
@@ -24,6 +26,7 @@ import java.util.concurrent.TimeUnit;
  */
 public class Server {
 
+    private static final Logger logger = LoggerFactory.getLogger(Server.class);
     private Thread thread;
 
 
@@ -83,7 +86,7 @@ public class Server {
             ChannelFuture channelFuture = serverBootstrap.bind(inetSocketAddress.getPort()).sync();
             channelFuture.channel().closeFuture().sync();
         } catch (InterruptedException e) {
-            throw new WuRuntimeException("start server fail.", e);
+            logger.info("receive interrupt, close server");
         } catch (Throwable t) {
             throw new WuRuntimeException("unknown error", t);
         } finally {

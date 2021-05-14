@@ -41,7 +41,7 @@ class ReflectUtilsTest {
     void getMethodListDesc() {
         Map<String, Method> methodListDesc = ReflectUtils.getMethodListDesc(UserService.class);
         logger.info("map: {}", methodListDesc);
-        assertEquals(2, methodListDesc.size());
+        assertEquals(4, methodListDesc.size());
     }
 
     @Test
