@@ -22,7 +22,7 @@ import java.io.IOException;
 /**
  * @author wangyongxu
  */
-@SpringBootTest(classes = TestApplication.class)
+@SpringBootTest(classes = TestApplication.class, properties = "wu.registry.port=52321")
 @Import(RpcWuFilterTest.AuthFilter.class)
 public class RpcWuFilterTest {
 

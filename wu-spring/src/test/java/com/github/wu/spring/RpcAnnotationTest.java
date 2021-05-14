@@ -14,7 +14,7 @@ import java.io.IOException;
 /**
  * @author wangyongxu
  */
-@SpringBootTest(classes = TestApplication.class)
+@SpringBootTest(classes = TestApplication.class, properties = "wu.registry.port=52322")
 public class RpcAnnotationTest {
 
     private static TestingServer server;
@@ -25,7 +25,7 @@ public class RpcAnnotationTest {
 
     @BeforeAll
     static void setup() throws Exception {
-        server = new TestingServer(51321, true);
+        server = new TestingServer(52322, true);
         server.start();
     }
 
