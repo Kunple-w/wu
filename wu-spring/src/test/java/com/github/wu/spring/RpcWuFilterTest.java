@@ -46,7 +46,7 @@ public class RpcWuFilterTest {
 
     @AfterAll
     static void tearDown() throws IOException {
-//        server.close();
+        server.close();
     }
 
     @Test
