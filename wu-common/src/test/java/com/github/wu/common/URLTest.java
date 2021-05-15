@@ -1,6 +1,5 @@
-package com.github.wu.core.rpc;
+package com.github.wu.common;
 
-import com.github.wu.common.URL;
 import org.junit.jupiter.api.Test;
 
 import java.util.HashMap;

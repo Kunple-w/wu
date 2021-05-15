@@ -8,6 +8,7 @@ import java.util.concurrent.ConcurrentHashMap;
  *
  * @author wangyongxu
  */
+@SPI
 public interface NameGenerator {
 
     /**

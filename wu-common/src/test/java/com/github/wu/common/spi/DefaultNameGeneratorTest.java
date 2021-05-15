@@ -1,7 +1,5 @@
-package com.github.wu.core.spi;
+package com.github.wu.common.spi;
 
-import com.github.wu.common.spi.DefaultNameGenerator;
-import com.github.wu.common.spi.NameGenerator;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
