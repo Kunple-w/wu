@@ -11,7 +11,7 @@ import java.util.concurrent.Executors;
 /**
  * @author wangyongxu
  */
-public class LocalRegisterService implements com.github.wu.registry.api.RegisterService {
+public class InJvmRegisterService implements com.github.wu.registry.api.RegisterService {
 
     // TODO: 2020-10-30 09:39:03 线程池配置 by wangyongxu
     ExecutorService executorService = Executors.newFixedThreadPool(1);

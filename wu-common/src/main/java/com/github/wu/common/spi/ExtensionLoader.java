@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Modifier;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
@@ -59,56 +60,34 @@ public class ExtensionLoader<T> {
         return extensionClasses.get(name);
     }
 
-    public T getExtension(String name) {
-        checkInit();
-
-        if (name == null) {
-            return null;
-        }
-
-        try {
-            SPI spi = type.getAnnotation(SPI.class);
-
-            if (spi.scope() == Scope.SINGLETON) {
-                return getSingletonInstance(name);
-            } else {
-                Class<T> clz = extensionClasses.get(name);
-                if (clz == null) {
-                    return null;
-                }
-                return clz.newInstance();
-            }
-        } catch (Exception e) {
-            failThrows(type, "Error when getExtension " + name, e);
-        }
-
-        return null;
+    @SuppressWarnings("unchecked")
+    public static synchronized <T> ExtensionLoader<T> initExtensionLoader(Class<T> type) {
+        return ((ExtensionLoader<T>) extensionLoaders.computeIfAbsent(type, ExtensionLoader::new));
     }
 
-    private T getSingletonInstance(String name) throws InstantiationException, IllegalAccessException {
-        T obj = singletonInstances.get(name);
-
-        if (obj != null) {
-            return obj;
-        }
-
-        Class<T> clz = extensionClasses.get(name);
-
+    /**
+     * check clz
+     *
+     * <pre>
+     * 		1.  is interface
+     * 		2.  is contains @Spi annotation
+     * </pre>
+     *
+     * @param <T>
+     * @param clz
+     */
+    private static <T> void checkInterfaceType(Class<T> clz) {
         if (clz == null) {
-            return null;
+            throw new WuRuntimeException("Error extension type is null");
         }
 
-        synchronized (singletonInstances) {
-            obj = singletonInstances.get(name);
-            if (obj != null) {
-                return obj;
-            }
-
-            obj = clz.newInstance();
-            singletonInstances.put(name, obj);
+        if (!clz.isInterface()) {
+            failThrows(clz, "Error extension type is not interface");
         }
 
-        return obj;
+        if (!isSpiType(clz)) {
+            failThrows(clz, "Error extension type without @SPI annotation");
+        }
     }
 
     public void addExtensionClass(Class<T> clz) {
@@ -154,17 +133,30 @@ public class ExtensionLoader<T> {
         return loader;
     }
 
-    @SuppressWarnings("unchecked")
-    public static synchronized <T> ExtensionLoader<T> initExtensionLoader(Class<T> type) {
-        ExtensionLoader<T> loader = (ExtensionLoader<T>) extensionLoaders.get(type);
+    public T getExtension(String name) {
+        checkInit();
 
-        if (loader == null) {
-            loader = new ExtensionLoader<>(type);
-
-            extensionLoaders.put(type, loader);
+        if (name == null) {
+            return null;
         }
 
-        return loader;
+        try {
+            SPI spi = type.getAnnotation(SPI.class);
+
+            if (spi.scope() == Scope.SINGLETON) {
+                return getSingletonInstance(name);
+            } else {
+                Class<T> clz = extensionClasses.get(name);
+                if (clz == null) {
+                    return null;
+                }
+                return clz.getConstructor().newInstance();
+            }
+        } catch (Exception e) {
+            failThrows(type, "Error when getExtension " + name, e);
+        }
+
+        return null;
     }
 
     /**
@@ -202,29 +194,30 @@ public class ExtensionLoader<T> {
         return exts;
     }
 
-    /**
-     * check clz
-     *
-     * <pre>
-     * 		1.  is interface
-     * 		2.  is contains @Spi annotation
-     * </pre>
-     *
-     * @param <T>
-     * @param clz
-     */
-    private static <T> void checkInterfaceType(Class<T> clz) {
+    private T getSingletonInstance(String name) throws InstantiationException, IllegalAccessException, NoSuchMethodException, InvocationTargetException {
+        T obj = singletonInstances.get(name);
+
+        if (obj != null) {
+            return obj;
+        }
+
+        Class<T> clz = extensionClasses.get(name);
+
         if (clz == null) {
-            failThrows(clz, "Error extension type is null");
+            return null;
         }
 
-        if (!clz.isInterface()) {
-            failThrows(clz, "Error extension type is not interface");
+        synchronized (singletonInstances) {
+            obj = singletonInstances.get(name);
+            if (obj != null) {
+                return obj;
+            }
+
+            obj = clz.getConstructor().newInstance();
+            singletonInstances.put(name, obj);
         }
 
-        if (!isSpiType(clz)) {
-            failThrows(clz, "Error extension type without @SPI annotation");
-        }
+        return obj;
     }
 
     /**
