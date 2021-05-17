@@ -1,6 +1,6 @@
 package com.github.wu.spring.configurer;
 
-import com.github.wu.core.rpc.filter.FilterRegistry;
+import com.github.wu.core.rpc.remoting.filter.FilterRegistry;
 
 /**
  * @author wangyongxu

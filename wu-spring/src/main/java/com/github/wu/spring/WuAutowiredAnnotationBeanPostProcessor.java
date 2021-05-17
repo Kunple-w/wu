@@ -1,9 +1,9 @@
 package com.github.wu.spring;
 
-import com.github.wu.core.rpc.config.ReferenceConfig;
-import com.github.wu.core.rpc.filter.FilterRegistry;
-import com.github.wu.core.rpc.filter.FilterScope;
-import com.github.wu.core.rpc.filter.WuFilter;
+import com.github.wu.core.config.ReferenceConfig;
+import com.github.wu.core.rpc.remoting.filter.FilterRegistry;
+import com.github.wu.core.rpc.remoting.filter.FilterScope;
+import com.github.wu.core.rpc.remoting.filter.WuFilter;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

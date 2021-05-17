@@ -15,6 +15,7 @@ import org.slf4j.LoggerFactory;
 
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -39,7 +40,7 @@ class ZookeeperRegistryTest {
 
     @AfterEach
     void tearDown() throws Exception {
-        server.stop();
+        server.close();
     }
 
     @org.junit.jupiter.api.Test
@@ -87,6 +88,7 @@ class ZookeeperRegistryTest {
                 logger.info("数据变动: {}", context.getNow());
             }
         });
+        TimeUnit.SECONDS.sleep(2);
         registry.register(url);
         latch.await();
     }
@@ -106,6 +108,7 @@ class ZookeeperRegistryTest {
                 logger.info("数据变动: {}", context.getNow());
             }
         });
+        TimeUnit.SECONDS.sleep(2);
         registry.register(url);
         assertEquals(1, registry.lookup(url).size());
         registry.unregister(url);

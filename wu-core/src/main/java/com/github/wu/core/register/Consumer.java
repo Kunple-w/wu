@@ -6,7 +6,7 @@ import com.github.wu.core.rpc.Invoker;
  * 消费端本地调用
  *
  * @author wangyongxu
- * @see com.github.wu.core.rpc.filter.WuFilter
+ * @see com.github.wu.core.rpc.remoting.filter.WuFilter
  */
 public interface Consumer<T> extends Invoker<T> {
 

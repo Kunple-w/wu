@@ -2,7 +2,11 @@ package com.github.wu.core.rpc.config;
 
 import com.github.wu.core.UserService;
 import com.github.wu.core.UserServiceImpl;
-import com.github.wu.core.rpc.filter.FilterRegistry;
+import com.github.wu.core.config.ExportConfig;
+import com.github.wu.core.config.ReferenceConfig;
+import com.github.wu.core.config.RegistryConfig;
+import com.github.wu.core.config.ServiceConfig;
+import com.github.wu.core.rpc.remoting.filter.FilterRegistry;
 import org.apache.curator.test.TestingServer;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;

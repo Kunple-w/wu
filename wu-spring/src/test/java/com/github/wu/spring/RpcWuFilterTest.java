@@ -1,10 +1,10 @@
 package com.github.wu.spring;
 
 import com.github.wu.common.exception.RpcException;
-import com.github.wu.core.rpc.filter.FilterScope;
-import com.github.wu.core.rpc.filter.WuFilter;
-import com.github.wu.core.transport.ApiResult;
-import com.github.wu.core.transport.Invocation;
+import com.github.wu.core.rpc.remoting.filter.FilterScope;
+import com.github.wu.core.rpc.remoting.filter.WuFilter;
+import com.github.wu.core.rpc.remoting.transport.ApiResult;
+import com.github.wu.core.rpc.remoting.transport.Invocation;
 import com.github.wu.spring.biz.AdminService;
 import com.github.wu.spring.biz.EmailService;
 import org.apache.curator.test.TestingServer;
@@ -26,6 +26,8 @@ import java.io.IOException;
 @Import(RpcWuFilterTest.AuthFilter.class)
 public class RpcWuFilterTest {
 
+    private static final Logger logger = LoggerFactory.getLogger(RpcWuFilterTest.class);
+
     private EmailService emailService;
 
     private AdminService adminService;
@@ -46,12 +48,15 @@ public class RpcWuFilterTest {
 
     @AfterAll
     static void tearDown() throws IOException {
+        logger.info("close server: {}", server.getConnectString());
         server.close();
     }
 
     @Test
     public void testWuService() {
         Assertions.assertThrows(RpcException.class, () -> emailService.echo("wu", "hello world"), "user auth error");
+        logger.info("success: {}", server.getConnectString());
+
     }
 
 

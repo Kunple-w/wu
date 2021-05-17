@@ -1,7 +1,7 @@
 package com.github.wu.core.rpc.proxy;
 
 import com.github.wu.core.rpc.Invoker;
-import com.github.wu.core.rpc.filter.FilterRegistry;
+import com.github.wu.core.rpc.remoting.filter.FilterRegistry;
 
 import java.lang.reflect.Proxy;
 

@@ -1,8 +1,8 @@
 package com.github.wu.core.rpc;
 
 import com.github.wu.common.URL;
-import com.github.wu.core.transport.ApiResult;
-import com.github.wu.core.transport.Request;
+import com.github.wu.core.rpc.remoting.transport.ApiResult;
+import com.github.wu.core.rpc.remoting.transport.Request;
 
 import java.util.HashMap;
 import java.util.Map;

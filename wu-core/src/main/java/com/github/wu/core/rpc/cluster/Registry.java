@@ -2,7 +2,7 @@ package com.github.wu.core.rpc.cluster;
 
 import com.github.wu.common.Node;
 import com.github.wu.core.rpc.Invoker;
-import com.github.wu.core.transport.Invocation;
+import com.github.wu.core.rpc.remoting.transport.Invocation;
 
 import java.util.List;
 

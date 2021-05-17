@@ -6,8 +6,8 @@ import com.github.wu.core.rpc.Invoker;
 import com.github.wu.core.rpc.RpcContext;
 import com.github.wu.core.rpc.exception.ServiceUnavailableException;
 import com.github.wu.core.rpc.loadbalance.LoadBalance;
-import com.github.wu.core.transport.ApiResult;
-import com.github.wu.core.transport.Invocation;
+import com.github.wu.core.rpc.remoting.transport.ApiResult;
+import com.github.wu.core.rpc.remoting.transport.Invocation;
 
 import java.util.List;
 
