@@ -1,12 +1,13 @@
 package com.github.wu.core.rpc;
 
 import com.github.wu.common.Node;
-import com.github.wu.core.register.Callable;
+import com.github.wu.core.rpc.remoting.transport.ApiResult;
+import com.github.wu.core.rpc.remoting.transport.Invocation;
 
 /**
  * @author wangyongxu
  */
-public interface Invoker<T> extends Node, Callable {
+public interface Invoker<T> extends Node {
     /**
      * get this provider interface
      *
@@ -14,4 +15,7 @@ public interface Invoker<T> extends Node, Callable {
      * @author wangyongxu
      */
     Class<T> getInterface();
+
+    ApiResult call(Invocation invocation);
+
 }
